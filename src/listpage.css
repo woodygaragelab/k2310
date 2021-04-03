@@ -1,0 +1,10 @@
+h1 {
+/* テキストは基本(App.css）左寄せだが、h1（タイトル）だけ中央寄にする */
+  text-align: center;
+}
+/* 隠しボタン用の色。背景色bg-color-1 と同じにする。*/
+.btn-secondary {
+  color: #fff;
+  background-color: #8392c9;
+  border-color: #8392c9;
+}
