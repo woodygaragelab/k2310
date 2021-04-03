@@ -18,46 +18,59 @@ class ListPage extends Component {
 
   constructor(props){
     super(props);
-    this.fetchItemsFromAPI = this.fetchItemsFromAPI.bind(this);
-    this.createItem = this.createItem.bind(this);
-    this.editItem = this.editItem.bind(this);
-    this.login = this.login.bind(this);
+    //this.fetchItemsFromAPI = this.fetchItemsFromAPI.bind(this);
+    //this.createItem = this.createItem.bind(this);
+    //this.editItem = this.editItem.bind(this);
+    //this.login = this.login.bind(this);
     this.state = {
       isLoggedIn: false,
       username: "",
       items: initialItemState
     };
-    this.fetchItemsFromAPI();
+    //this.fetchItemsFromAPI();
   }
 
-  async fetchItemsFromAPI() {
-    this.state = {items:initialItemState}
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({"function":"list","category":"food"});
-    var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
-    fetch("https://yxckp7iyk4.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
-    .then(response => response.text())
-    .then(async(response) => {
-      const apiData = JSON.parse(response);
-      //await Promise.all(apiData.map(async item => {
-      apiData.map(async item => {
-        if (item.imagefile) {
-          // imageFile名からimageUrlを取得する
-          let dataExpireSeconds = (3 * 60);
-          const imageurl = await Storage.get(item.imagefile, { expires: dataExpireSeconds });
-          //const bucket   = "https://ikkohchoice232927-staging.s3-ap-northeast-1.amazonaws.com/public/";
-          //const imageurl = bucket + item.imagefile;
-          item.imageurl = imageurl;
-          this.setState({items: apiData});   //imageurlを取得ごとに非同期でセットする。apiDataのmap中の処理でもOK？
-          return item;    
-        }
-        return item;    
-      })
-    })
-    .catch(error => console.log('error', error));
-    //alert(response);
-  }
+  // async fetchItemsFromAPI() {
+  //   this.state = {items:initialItemState}
+  //   var myHeaders = new Headers();
+  //   myHeaders.append("Content-Type", "application/json");
+  //   var raw = JSON.stringify({"function":"list","category":"food"});
+  //   var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
+  //   fetch("https://yxckp7iyk4.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
+  //   .then(response => response.text())
+  //   .then(async(response) => {
+  //     const apiData = JSON.parse(response);
+  //     //await Promise.all(apiData.map(async item => {
+  //     apiData.map(async item => {
+  //       if (item.imagefile) {
+  //         // imageFile名からimageUrlを取得する
+  //         let dataExpireSeconds = (3 * 60);
+  //         const imageurl = await Storage.get(item.imagefile, { expires: dataExpireSeconds });
+  //         //const bucket   = "https://ikkohchoice232927-staging.s3-ap-northeast-1.amazonaws.com/public/";
+  //         //const imageurl = bucket + item.imagefile;
+  //         item.imageurl = imageurl;
+  //         this.setState({items: apiData});   //imageurlを取得ごとに非同期でセットする。apiDataのmap中の処理でもOK？
+  //         return item;    
+  //       }
+  //       return item;    
+  //     })
+  //   })
+  //   .catch(error => console.log('error', error));
+  //   //alert(response);
+  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   async createItem() {
     this.props.history.push({
@@ -66,17 +79,17 @@ class ListPage extends Component {
     });
   }
 
-  async deleteItemFromAPI({ ID }) {
-    const newItemsArray = this.state.items.filter(item => item.ID !== ID);
-    this.setState({items: newItemsArray});
+  // async deleteItemFromAPI({ ID }) {
+  //   const newItemsArray = this.state.items.filter(item => item.ID !== ID);
+  //   this.setState({items: newItemsArray});
     
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({"function":"delete", "ID":ID });
-    var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
-    fetch("https://yxckp7iyk4.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
-    .catch(error => console.log('error', error));
-  }
+  //   var myHeaders = new Headers();
+  //   myHeaders.append("Content-Type", "application/json");
+  //   var raw = JSON.stringify({"function":"delete", "ID":ID });
+  //   var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
+  //   fetch("https://yxckp7iyk4.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
+  //   .catch(error => console.log('error', error));
+  // }
 
   editItem(item) {
     this.props.history.push({
@@ -85,42 +98,42 @@ class ListPage extends Component {
     });
   }
 
-  orderItem(item) {
-    this.props.history.push({
-      pathname: '/detailpage',
-      state: { item: item }
-    });
-  }
+  // orderItem(item) {
+  //   this.props.history.push({
+  //     pathname: '/detailpage',
+  //     state: { item: item }
+  //   });
+  // }
 
   //隠しボタンで起動するlogin
-  login() {
-    this.setState({isLoggedIn: !this.state.isLoggedIn});
-  }
+  // login() {
+  //   this.setState({isLoggedIn: !this.state.isLoggedIn});
+  // }
 
   render() {
 
     return (
       <div style={{marginBottom: 30}}  className="container-fluid bg-color-1">
-        <h1>Ikkohのおすすめ書籍{this.state.username}</h1>
+        <h1>K2310{this.state.username}</h1>
 
         {
           this.state.items.map(item => (
             <div className="card" key={item.id || item.name}>
               <div className="card-body bg-color-2">
                 <div className="row">
-                  <div className="col-2">
+                  {/* <div className="col-2">
                     <img src={item.imageurl} style={{width: 100,height:100}} alt=""/>
-                  </div>
+                  </div> */}
                   <div className="col-6">
                     <div><h4>{item.name}</h4></div>
                     <div>{item.description}</div>
                   </div>
-                  <div className="col-2">
+                  {/* <div className="col-2">
                     <a className="btn btn-primary" href={item.amazonurl} role="button">
                         <FontAwesomeIcon icon={faAmazon} />
                     </a>
-                  </div>
-                  {this.state.isLoggedIn &&
+                  </div> */}
+                  {/* {this.state.isLoggedIn && */}
                     <div className="col-2">
                       <button type="button" onClick={() => this.editItem(item)} className="btn btn-primary">
                         <FontAwesomeIcon icon={faEdit} />
@@ -129,14 +142,14 @@ class ListPage extends Component {
                         <FontAwesomeIcon icon={faTrash} />
                       </button>
                     </div>
-                  } 
+                  {/* }  */}
                 </div>              
               </div>              
             </div>              
           ))
         }
 
-        <div style={{marginTop: 100}}  className="container-fluid">
+        {/* <div style={{marginTop: 100}}  className="container-fluid">
         <div className="row">
           <div className="col-10"/>
           <div className="col-2">
@@ -148,7 +161,7 @@ class ListPage extends Component {
             <button type="button" onClick={this.login} className="btn btn-secondary"/>
           </div>
         </div>              
-        </div> 
+        </div>  */}
 
       </div>
     );
