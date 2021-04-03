@@ -12,7 +12,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit,faTrash,faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { faAmazon } from "@fortawesome/free-brands-svg-icons";
 
-const initialItemState = [{ name: 'initial', description: 'item state' }]
+const initialItemState = [
+  { name: '土', description: '作業' },
+  { name: '日', description: '立ち合い' }
+]
 
 class ListPage extends Component {
 
