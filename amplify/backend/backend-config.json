@@ -1,1 +1,10 @@
-{}
+{
+  "auth": {
+    "k2310c3c83dda": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}
