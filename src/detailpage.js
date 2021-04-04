@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Storage } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './detailpage.css';
 import Button from 'react-bootstrap/Button';
-
-const TIMEZONEOFFSET = -9;     // UTC-表示したいタイムゾーン(単位:hour)。JSTなら-9
+import { createBook as createBookMutation } from './graphql/mutations';
+import { updateBook as updateBookMutation } from './graphql/mutations';
+import { deleteBook as deleteBookMutation } from './graphql/mutations';
 
 class DetailPage extends Component{
 
   constructor(props) {
     super(props);
+    this.handleChange0 = this.handleChange0.bind(this)
     this.handleChange1 = this.handleChange1.bind(this)
     this.handleChange2 = this.handleChange2.bind(this)
-    this.onChangeImage = this.onChangeImage.bind(this);
-    this.handleClick = this.handleClick.bind(this)
-    this.createItemFromAPI = this.createItemFromAPI.bind(this);
-    this.updateItemFromAPI = this.updateItemFromAPI.bind(this);
+    this.handleAdd = this.handleAdd.bind(this)
+    this.handleUpdate = this.handleUpdate.bind(this)
+    this.createBook = this.createBook.bind(this);
+    this.updateBook = this.updateBook.bind(this);
     
     this.state = {
       item: this.props.location.state.item,
@@ -23,50 +26,30 @@ class DetailPage extends Component{
 
   }
 
-  async createItemFromAPI() {
+  async createBook() {
     if (!this.state.item.name || !this.state.item.description) return;
-
-    let d = new Date(Date.now() - (TIMEZONEOFFSET * 60 - new Date().getTimezoneOffset()) * 60000);    
-    let now = d.toISOString();
-
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({"function":"add",
-                        "category":"food",
-                        "ID":now,
-                        "name":this.state.item.name,
-                        "description":this.state.item.description,
-                        "amazonurl":this.state.item.amazonurl,
-                        "imagefile":this.state.item.imagefile,
-                        "imageurl":this.state.item.imageurl
-                      });
-    var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
-    fetch("https://yxckp7iyk4.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
-    // .then(response => response.text())
-    .catch(error => console.log('error', error));
+    const newItem = {
+        id: this.state.item.id,
+        name: this.state.item.name,
+        description: this.state.item.description,
+        guests: this.state.item.guests
+    };
+    await API.graphql({ query: createBookMutation, variables: { input: newItem } });
   }
 
-  async updateItemFromAPI() {
-    if (!this.state.item.name || !this.state.item.description) return;
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({"function":"add",
-                        "category":"food",
-                        "ID":this.state.item.ID,
-                        "name":this.state.item.name,
-                        "description":this.state.item.description,
-                        "amazonurl":this.state.item.amazonurl,
-                        "imagefile":this.state.item.imagefile,
-                        "imageurl":this.state.item.imageurl
-                      });
-    var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
-    fetch("https://yxckp7iyk4.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
-    // .then(response => response.text())
-    // .then((response) => {
-    //   alert(response);
-    // })
-    .catch(error => console.log('error', error));
+  async updateBook() {
+    if (!this.state.item.id || !this.state.item.name) return;
+    const newItem = {
+      id: this.state.item.id,
+      name: this.state.item.name,
+      description: this.state.item.description,
+      guests: this.state.item.guests
+    };
+    await API.graphql({ query: updateBookMutation, variables: { input: newItem } });
+  }
 
+  handleChange0(e){
+    this.setState({item: { ...this.state.item, id: e.target.value }});
   }
 
   handleChange1(e){
@@ -77,30 +60,13 @@ class DetailPage extends Component{
    this.setState({item: { ...this.state.item, description: e.target.value }});
   }
 
-  handleClick() {
-    // item.idがnullの時は新規作成、listpageから渡されてきたときは更新
-    if (this.state.item.ID === "") {
-      this.createItemFromAPI();
-    }
-    else {
-      this.updateItemFromAPI();
-    }
+  handleUpdate() {
+    this.updateBook();
     this.returnToListPage();
   }
 
-  async onChangeImage(e) {
-    if (!e.target.files[0]) return
-    const file = e.target.files[0];
-    this.setState({item: { ...this.state.item, imagefile: file.name }});
-    // imageFileをStorage(s3 service)に保存する
-    await Storage.put(file.name, file,{ level: 'public' }); // publicにしないとStorage.getできない
-    if (this.state.item.imagefile) {
-      // imageFile名からimageUrlを取得する
-      const imageurl = await Storage.get(this.state.item.imagefile);
-      this.setState({item: {...this.state.item, imageurl: imageurl}});
-      this.setState({imageurl: imageurl});
-    }
-
+  handleAdd() {
+    this.createBook();
   }
 
   returnToListPage() {
@@ -117,8 +83,17 @@ class DetailPage extends Component{
     return(
       <div className="container-fluid">
       <form>
-        <div className="form-group">
-          <label for="itemname">タイトル</label>
+        <div className="form-group woodytext">
+          <label for="itemid">日付</label>
+          <input
+            type='text' className="form-control" id="itemid" 
+            onChange={this.handleChange0}
+            placeholder="MM/DD"
+            value={this.state.item.id}
+          />
+        </div>
+        <div className="form-group woodytext">
+          <label for="itemname">曜日</label>
           <input
             type='text' className="form-control" id="itemname" 
             onChange={this.handleChange1}
@@ -126,8 +101,8 @@ class DetailPage extends Component{
             value={this.state.item.name}
           />
         </div>
-        <div className="form-group">
-          <label for="itemdesc">説明</label>
+        <div className="form-group woodytext">
+          <label for="itemdesc">メモ</label>
           <input
             type='text' className="form-control" id="itemdesc" 
             onChange={e => this.setState({item: { ...this.state.item, 'description': e.target.value }})}
@@ -135,26 +110,18 @@ class DetailPage extends Component{
             value={this.state.item.description}
           />
         </div>
-        <div className="form-group">
-          <label for="amazonurl">amazon url</label>
+        <div className="form-group woodytext">
+          <label for="amazonurl">滞在者</label>
           <input
-            type='text' className="form-control" id="amazonurl" 
-            onChange={e => this.setState({item: { ...this.state.item, 'amazonurl': e.target.value }})}
-            placeholder="amazonurl"
-            value={this.state.item.amazonurl}
+            type='text' className="form-control" id="guests" 
+            onChange={e => this.setState({item: { ...this.state.item, 'guests': e.target.value }})}
+            placeholder="guests"
+            value={this.state.item.guests}
           />
         </div>
-        <div className="form-group">
-          <label for="itemimage">イメージ</label>
-          {/* <p>imageUrl:{this.state.item.imageurl}</p> */}
-          <img src={this.state.item.imageurl} style={{width: 50,height:50}} alt=""/>
-          <input
-             type="file" className="form-control" id="itemimage"
-             onChange={this.onChangeImage}
-          />
-        </div>
-        <div className="form-group">
-          <Button onClick={this.handleClick}>OK</Button>
+        <div className="form-group woodytext">
+          <Button onClick={this.handleUpdate}>UPDATE</Button>
+          <Button onClick={this.handleAdd}>ADD</Button>
         </div>
       </form>
     </div>

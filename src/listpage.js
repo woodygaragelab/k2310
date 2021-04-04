@@ -2,19 +2,22 @@ import React from 'react';
 import { Component } from 'react';
 import './App.css';
 import './listpage.css';
-import { Storage } from 'aws-amplify';
-//import { API } from 'aws-amplify';
+//import { Storage } from 'aws-amplify';
+import { API } from 'aws-amplify';
+import { listBooks } from './graphql/queries';
+
 //import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
 //import { Auth } from 'aws-amplify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { withRouter } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit,faTrash,faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-import { faAmazon } from "@fortawesome/free-brands-svg-icons";
+import { faEdit,faTrash } from "@fortawesome/free-solid-svg-icons";
+//import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+//import { faAmazon } from "@fortawesome/free-brands-svg-icons";
 
 const initialItemState = [
-  { name: '土', description: '作業' },
-  { name: '日', description: '立ち合い' }
+  { id:'4/1', name: '土', description: '作業' },
+  { id:'4/2', name: '日', description: '立ち合い' }
 ]
 
 class ListPage extends Component {
@@ -30,7 +33,15 @@ class ListPage extends Component {
       username: "",
       items: initialItemState
     };
-    //this.fetchItemsFromAPI();
+    this.fetchItems();
+  }
+
+  async fetchItems() {
+    const apiData = await API.graphql({ query: listBooks });
+    //const booksFromAPI = apiData.data.listBooks.items;
+    //setItems(apiData.data.listBooks.items);
+    this.setState({items: apiData.data.listBooks.items}); 
+
   }
 
   // async fetchItemsFromAPI() {
@@ -61,18 +72,6 @@ class ListPage extends Component {
   //   .catch(error => console.log('error', error));
   //   //alert(response);
   // }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   async createItem() {
@@ -124,9 +123,9 @@ class ListPage extends Component {
             <div className="card" key={item.id || item.name}>
               <div className="card-body bg-color-2">
                 <div className="row">
-                  {/* <div className="col-2">
-                    <img src={item.imageurl} style={{width: 100,height:100}} alt=""/>
-                  </div> */}
+                  <div className="col-2">
+                    <div><h4>{item.id}</h4></div>
+                  </div>
                   <div className="col-6">
                     <div><h4>{item.name}</h4></div>
                     <div>{item.description}</div>
