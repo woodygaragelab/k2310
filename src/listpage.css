@@ -8,3 +8,27 @@ h1 {
   background-color: #8392c9;
   border-color: #8392c9;
 }
+
+.siteHeader {
+  background: #8992B9;
+  color: #ffffff;
+  display: flex;
+  position:fixed;
+  width: 100%;
+  font-family: Kanit, sans-serif;
+  font-size: 2em;
+  justify-content: center;
+  align-items: center;
+}
+.siteFooter {
+  background: #BDAFC9;
+  color: #ffffff;
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  font-family: Kanit, sans-serif;
+  font-size: 2em;
+  align-items: center;
+  justify-content: space-evenly;
+}

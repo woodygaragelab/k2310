@@ -5,6 +5,7 @@ import './listpage.css';
 //import { Storage } from 'aws-amplify';
 import { API } from 'aws-amplify';
 import { listBooks } from './graphql/queries';
+import { deleteBook as deleteBookMutation } from './graphql/mutations';
 
 //import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
 //import { Auth } from 'aws-amplify';
@@ -14,6 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit,faTrash } from "@fortawesome/free-solid-svg-icons";
 //import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 //import { faAmazon } from "@fortawesome/free-brands-svg-icons";
+import { faHeart, faHome, faChartLine } from "@fortawesome/free-solid-svg-icons";
 
 const initialItemState = [
   { id:'4/1', name: '土', description: '作業' },
@@ -27,11 +29,12 @@ class ListPage extends Component {
     //this.fetchItemsFromAPI = this.fetchItemsFromAPI.bind(this);
     //this.createItem = this.createItem.bind(this);
     //this.editItem = this.editItem.bind(this);
-    //this.login = this.login.bind(this);
+    this.selectM5 = this.selectM5.bind(this);
     this.state = {
       isLoggedIn: false,
       username: "",
-      items: initialItemState
+      items: initialItemState,
+      month: "4"
     };
     this.fetchItems();
   }
@@ -44,54 +47,12 @@ class ListPage extends Component {
 
   }
 
-  // async fetchItemsFromAPI() {
-  //   this.state = {items:initialItemState}
-  //   var myHeaders = new Headers();
-  //   myHeaders.append("Content-Type", "application/json");
-  //   var raw = JSON.stringify({"function":"list","category":"food"});
-  //   var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
-  //   fetch("https://yxckp7iyk4.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
-  //   .then(response => response.text())
-  //   .then(async(response) => {
-  //     const apiData = JSON.parse(response);
-  //     //await Promise.all(apiData.map(async item => {
-  //     apiData.map(async item => {
-  //       if (item.imagefile) {
-  //         // imageFile名からimageUrlを取得する
-  //         let dataExpireSeconds = (3 * 60);
-  //         const imageurl = await Storage.get(item.imagefile, { expires: dataExpireSeconds });
-  //         //const bucket   = "https://ikkohchoice232927-staging.s3-ap-northeast-1.amazonaws.com/public/";
-  //         //const imageurl = bucket + item.imagefile;
-  //         item.imageurl = imageurl;
-  //         this.setState({items: apiData});   //imageurlを取得ごとに非同期でセットする。apiDataのmap中の処理でもOK？
-  //         return item;    
-  //       }
-  //       return item;    
-  //     })
-  //   })
-  //   .catch(error => console.log('error', error));
-  //   //alert(response);
-  // }
-
-
   async createItem() {
     this.props.history.push({
       pathname: '/detailpage',
       state: {  item: {ID:""}  }
     });
   }
-
-  // async deleteItemFromAPI({ ID }) {
-  //   const newItemsArray = this.state.items.filter(item => item.ID !== ID);
-  //   this.setState({items: newItemsArray});
-    
-  //   var myHeaders = new Headers();
-  //   myHeaders.append("Content-Type", "application/json");
-  //   var raw = JSON.stringify({"function":"delete", "ID":ID });
-  //   var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
-  //   fetch("https://yxckp7iyk4.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
-  //   .catch(error => console.log('error', error));
-  // }
 
   editItem(item) {
     this.props.history.push({
@@ -100,12 +61,17 @@ class ListPage extends Component {
     });
   }
 
-  // orderItem(item) {
-  //   this.props.history.push({
-  //     pathname: '/detailpage',
-  //     state: { item: item }
-  //   });
-  // }
+  async deleteItem(item) {
+    if (!item.id) return;
+    const newItem = {
+      id: item.id
+    };
+    await API.graphql({ query: deleteBookMutation, variables: { input: newItem } });
+  }
+
+  selectM5() {
+    this.setState({month:"5"});
+  }
 
   //隠しボタンで起動するlogin
   // login() {
@@ -116,7 +82,7 @@ class ListPage extends Component {
 
     return (
       <div style={{marginBottom: 30}}  className="container-fluid bg-color-1">
-        <h1>K2310{this.state.username}</h1>
+        <h1>{this.state.month}月予定</h1>
 
         {
           this.state.items.map(item => (
@@ -130,23 +96,17 @@ class ListPage extends Component {
                     <div><h4>{item.name}</h4></div>
                     <div>{item.description}</div>
                   </div>
-                  {/* <div className="col-2">
-                    <a className="btn btn-primary" href={item.amazonurl} role="button">
-                        <FontAwesomeIcon icon={faAmazon} />
-                    </a>
-                  </div> */}
-                  {/* {this.state.isLoggedIn && */}
-                    <div className="col-2">
-                      <button type="button" onClick={() => this.editItem(item)} className="btn btn-primary">
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                      <button type="button" onClick={() =>  this.deleteItemFromAPI(item)} className="btn btn-primary">
-                        <FontAwesomeIcon icon={faTrash} />
-                      </button>
-                    </div>
-                  {/* }  */}
+                  <div className="col-2">
+                    <button type="button" onClick={() => this.editItem(item)} className="btn btn-primary">
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button type="button" onClick={() =>  this.deleteItem(item)} className="btn btn-primary">
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </div>
                 </div>              
-              </div>              
+              </div>
+              
             </div>              
           ))
         }
@@ -164,6 +124,12 @@ class ListPage extends Component {
           </div>
         </div>              
         </div>  */}
+
+        <footer className="siteFooter">
+          <FontAwesomeIcon icon={faHome} onClick={this.selectM5}/>
+          <FontAwesomeIcon icon={faChartLine} />
+          <FontAwesomeIcon icon={faHeart} />
+        </footer>
 
       </div>
     );
