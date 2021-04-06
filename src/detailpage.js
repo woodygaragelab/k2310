@@ -8,10 +8,11 @@ class DetailPage extends Component{
 
   constructor(props) {
     super(props);
-    this.handleAdd = this.handleAdd.bind(this)
-    this.handleUpdate = this.handleUpdate.bind(this)
-    this.addFromAPI = this.addFromAPI.bind(this);
+    this.handleAdd     = this.handleAdd.bind(this)
+    this.handleUpdate  = this.handleUpdate.bind(this)
+    this.addFromAPI    = this.addFromAPI.bind(this);
     this.updateFromAPI = this.updateFromAPI.bind(this);
+    this.next = this.next.bind(this);
     
     this.state = {
       month: this.props.location.state.month,
@@ -41,17 +42,13 @@ class DetailPage extends Component{
   async addFromAPI() {
     if (!this.state.item.key || !this.state.item.name) return;
 
-    // let d = new Date(Date.now() - (TIMEZONEOFFSET * 60 - new Date().getTimezoneOffset()) * 60000);    
-    // let now = d.toISOString();
-    //let mm = ('0' + (this.state.item.group)).slice(-2);
-    //let dd = ('0' + (this.state.item.sortkey)).slice(-2);
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({"function":"add",
                         "group":this.state.item.group,
-                        "key":this.state.item.group,    
-                        "sortkey":this.state.item.sorkkey,
+                        "key":this.state.item.key,
+                        "sortkey":this.state.item.sortkey,
                         "name":this.state.item.name,
                         "description":this.state.item.description,
                         "data":this.state.item.data
@@ -68,16 +65,35 @@ class DetailPage extends Component{
 
   handleAdd() {
     this.addFromAPI();
+    this.next();
   }
 
   returnToListPage() {
+    var pathname = "/listpage"+ this.state.month;
     this.props.history.push({
-      pathname: '/',
+      pathname: pathname,
       state: { 
-        name: this.state.name,
-        description: this.state.description
+        month: this.state.month
       }
     });
+  }
+  //pathname: '/',
+
+  next() {
+    const this_dd = this.state.item.sortkey;
+    const dd = parseInt(this_dd);
+    const mm = parseInt(this.state.item.key)-1;
+    var this_date = new Date(2021,mm,dd);
+    var next_date = new Date();
+    next_date.setDate(this_date.getDate() + 1);
+    var next_dd   = ('0' + (next_date.getDate().toString())).slice(-2);
+    var dayOfWeek = next_date.getDay();
+    var next_name = [ "日", "月", "火", "水", "木", "金", "土" ][dayOfWeek] ;
+    this.setState( {item: { ...this.state.item, 'sortkey': next_dd, 'name': next_name }});
+    // let d = new Date(Date.now() - (TIMEZONEOFFSET * 60 - new Date().getTimezoneOffset()) * 60000);    
+    // let now = d.toISOString();
+    //let mm = ('0' + (this.state.item.group)).slice(-2);
+    //let dd = ('0' + (this.state.item.sortkey)).slice(-2);
   }
 
   render(){
@@ -88,7 +104,7 @@ class DetailPage extends Component{
           <label for="itemgroup">月</label>
           <input
             type='text' className="form-control" id="itemgroup" 
-            onChange={e => this.setState({item: { ...this.state.item, 'group': e.target.value }})}
+            onChange={e => this.setState({item: { ...this.state.item, 'key': e.target.value, 'group': e.target.value }})}
             placeholder="MM"
             value={this.state.item.group}
           />
