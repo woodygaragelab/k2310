@@ -1,72 +1,73 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { API } from 'aws-amplify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './detailpage.css';
 import Button from 'react-bootstrap/Button';
-import { createBook as createBookMutation } from './graphql/mutations';
-import { updateBook as updateBookMutation } from './graphql/mutations';
-import { deleteBook as deleteBookMutation } from './graphql/mutations';
 
 class DetailPage extends Component{
 
   constructor(props) {
     super(props);
-    this.handleChange0 = this.handleChange0.bind(this)
-    this.handleChange1 = this.handleChange1.bind(this)
-    this.handleChange2 = this.handleChange2.bind(this)
     this.handleAdd = this.handleAdd.bind(this)
     this.handleUpdate = this.handleUpdate.bind(this)
-    this.createBook = this.createBook.bind(this);
-    this.updateBook = this.updateBook.bind(this);
+    this.addFromAPI = this.addFromAPI.bind(this);
+    this.updateFromAPI = this.updateFromAPI.bind(this);
     
     this.state = {
+      month: this.props.location.state.month,
       item: this.props.location.state.item,
     };
 
   }
 
-  async createBook() {
-    if (!this.state.item.name || !this.state.item.description) return;
-    const newItem = {
-        id: this.state.item.id,
-        name: this.state.item.name,
-        description: this.state.item.description,
-        guests: this.state.item.guests
-    };
-    await API.graphql({ query: createBookMutation, variables: { input: newItem } });
+  async updateFromAPI() {
+    if (!this.state.item.key || !this.state.item.name) return;
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({"function":"add",
+                        "group":this.state.item.group,
+                        "key":this.state.item.key,
+                        "sortkey":this.state.item.sortkey,
+                        "name":this.state.item.name,
+                        "description":this.state.item.description,
+                        "data":this.state.item.data
+                      });
+    var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
+    fetch("https://pn2psx9qfd.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
+    .catch(error => console.log('error', error));
+
   }
 
-  async updateBook() {
-    if (!this.state.item.id || !this.state.item.name) return;
-    const newItem = {
-      id: this.state.item.id,
-      name: this.state.item.name,
-      description: this.state.item.description,
-      guests: this.state.item.guests
-    };
-    await API.graphql({ query: updateBookMutation, variables: { input: newItem } });
-  }
+  async addFromAPI() {
+    if (!this.state.item.key || !this.state.item.name) return;
 
-  handleChange0(e){
-    this.setState({item: { ...this.state.item, id: e.target.value }});
-  }
+    // let d = new Date(Date.now() - (TIMEZONEOFFSET * 60 - new Date().getTimezoneOffset()) * 60000);    
+    // let now = d.toISOString();
+    //let mm = ('0' + (this.state.item.group)).slice(-2);
+    //let dd = ('0' + (this.state.item.sortkey)).slice(-2);
 
-  handleChange1(e){
-    this.setState({item: { ...this.state.item, name: e.target.value }});
-  }
-
-  handleChange2(e){
-   this.setState({item: { ...this.state.item, description: e.target.value }});
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({"function":"add",
+                        "group":this.state.item.group,
+                        "key":this.state.item.group,    
+                        "sortkey":this.state.item.sorkkey,
+                        "name":this.state.item.name,
+                        "description":this.state.item.description,
+                        "data":this.state.item.data
+                      });
+    var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
+    fetch("https://pn2psx9qfd.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
+    .catch(error => console.log('error', error));
   }
 
   handleUpdate() {
-    this.updateBook();
+    this.updateFromAPI();
     this.returnToListPage();
   }
 
   handleAdd() {
-    this.createBook();
+    this.addFromAPI();
   }
 
   returnToListPage() {
@@ -84,20 +85,29 @@ class DetailPage extends Component{
       <div className="container-fluid">
       <form>
         <div className="form-group woodytext">
-          <label for="itemid">日付</label>
+          <label for="itemgroup">月</label>
           <input
-            type='text' className="form-control" id="itemid" 
-            onChange={this.handleChange0}
-            placeholder="MM/DD"
-            value={this.state.item.id}
+            type='text' className="form-control" id="itemgroup" 
+            onChange={e => this.setState({item: { ...this.state.item, 'group': e.target.value }})}
+            placeholder="MM"
+            value={this.state.item.group}
+          />
+        </div>
+        <div className="form-group woodytext">
+          <label for="itemsortkey">日</label>
+          <input
+            type='text' className="form-control" id="itemsortkey" 
+            onChange={e => this.setState({item: { ...this.state.item, 'sortkey': e.target.value }})}
+            placeholder="DD"
+            value={this.state.item.sortkey}
           />
         </div>
         <div className="form-group woodytext">
           <label for="itemname">曜日</label>
           <input
             type='text' className="form-control" id="itemname" 
-            onChange={this.handleChange1}
-            placeholder="item name"
+            onChange={e => this.setState({item: { ...this.state.item, 'name': e.target.value }})}
+            placeholder="曜日"
             value={this.state.item.name}
           />
         </div>
@@ -111,12 +121,12 @@ class DetailPage extends Component{
           />
         </div>
         <div className="form-group woodytext">
-          <label for="amazonurl">滞在者</label>
+          <label for="itemdata">滞在者</label>
           <input
-            type='text' className="form-control" id="guests" 
-            onChange={e => this.setState({item: { ...this.state.item, 'guests': e.target.value }})}
+            type='text' className="form-control" id="itemdata" 
+            onChange={e => this.setState({item: { ...this.state.item, 'data': e.target.value }})}
             placeholder="guests"
-            value={this.state.item.guests}
+            value={this.state.item.data}
           />
         </div>
         <div className="form-group woodytext">
