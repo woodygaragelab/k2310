@@ -26,7 +26,6 @@ class ListPage extends Component {
   }
 
   async fetchItemsFromAPI(key) {
-
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({"function":"list","key":key,"group":key});
@@ -69,6 +68,7 @@ class ListPage extends Component {
             <div className="col-2">7月</div>
             <div className="col-2">8月</div>
         </header>
+        <form>
 
         {
           this.state.items.map(item => {
@@ -85,11 +85,11 @@ class ListPage extends Component {
                     <div><h4>{item.sortkey}({item.name})</h4></div>
                   </div>
                   <div className="col-3">
-                    <div><h4>{item.description}</h4></div>
+                    <div>item.data={item.data}</div>
+                    <div>{itemdata.total}({itemdata.d1}-{itemdata.d2}-{itemdata.d3})</div>
                   </div>
                   <div className="col-3">
-                    <div>item.data={item.data}</div>
-                    <div>itemdata.total={itemdata.total}</div>
+                    <div><h4>{item.description}</h4></div>
                   </div>
                 </div>              
               </div>
@@ -97,6 +97,7 @@ class ListPage extends Component {
             )
           })
         }
+        </form>
 
         <footer className="fixed-bottom siteFooter">
           <div>Schedule</div>
