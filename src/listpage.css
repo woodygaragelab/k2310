@@ -13,22 +13,23 @@ h1 {
   background: #8992B9;
   color: #ffffff;
   display: flex;
-  position:fixed;
   width: 100%;
   font-family: Kanit, sans-serif;
-  font-size: 2em;
-  justify-content: center;
+  font-size: 1.5em;
   align-items: center;
+  justify-content: space-evenly;
+}
+
+.siteHeaderSelected {
+  background: #444444;
 }
 .siteFooter {
   background: #BDAFC9;
   color: #ffffff;
   display: flex;
-  position: absolute;
-  bottom: 0;
   width: 100%;
   font-family: Kanit, sans-serif;
-  font-size: 2em;
+  font-size: 1.5em;
   align-items: center;
   justify-content: space-evenly;
 }

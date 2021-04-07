@@ -75,8 +75,15 @@ class ListPage extends Component {
   render() {
 
     return (
-      <div style={{marginBottom: 30}}  className="container-fluid bg-color-1">
-        <h1>{this.state.month}月予定</h1>
+      <div className="mt-5 mb-5 container-fluid bg-color-1">
+        {/* <h1>{this.state.month}月予定</h1> */}
+        <header className="fixed-top siteHeader">
+            <div onClick={this.selectM4} className="col-2">4月</div>
+            <div onClick={this.selectM5} className="col-2 siteHeaderSelected">5月</div>
+            <div onClick={this.selectM6} className="col-2">6月</div>
+            <div className="col-2">7月</div>
+            <div className="col-2">8月</div>
+        </header>
 
         {
           this.state.items.map(item => (
@@ -97,12 +104,10 @@ class ListPage extends Component {
           ))
         }
 
-        <footer className="siteFooter">
-          <div onClick={this.selectM4}>4月</div>
-          <div onClick={this.selectM5}>5月</div>
-          <div onClick={this.selectM6}>6月</div>
-          <div>7月</div>
-          <div>8月</div>
+        <footer className="fixed-bottom siteFooter">
+          <div>Schedule</div>
+          <div>ToDo</div>
+          <div>Stock</div>
         </footer>
 
       </div>
