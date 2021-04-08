@@ -71,25 +71,22 @@ class ListPage extends Component {
         <form>
 
         {
-          this.state.items.map(item => {
+          this.state.items.map((item,index) => {
             var itemdata = {total:0};
-            if (item.data) {
-              var itemdata_str = item.data;
-              itemdata = JSON.parse(itemdata_str);
-            }
+            if (item.data) { itemdata = JSON.parse(item.data); }
             return (
               <div className="card" key={item.key + item.sortkey}>
               <div className="card-body bg-color-2" onClick={() => this.editItem(item)}>
                 <div className="row">
                   <div className="col-3">
-                    <div><h4>{item.sortkey}({item.name})</h4></div>
-                  </div>
-                  <div className="col-3">
-                    <div>item.data={item.data}</div>
-                    <div>{itemdata.total}({itemdata.d1}-{itemdata.d2}-{itemdata.d3})</div>
+                    <div><h4>{item.sortkey}({item.name})({index})</h4></div>
                   </div>
                   <div className="col-3">
                     <div><h4>{item.description}</h4></div>
+                  </div>
+                  <div className="col-4">
+                    {/* <div>item.data={item.data}</div> */}
+                    <div><h4>{itemdata.total}({itemdata.d1}-{itemdata.d2}-{itemdata.d3}-{itemdata.d4})</h4></div>
                   </div>
                 </div>              
               </div>
