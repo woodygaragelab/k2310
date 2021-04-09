@@ -51,7 +51,6 @@ class DetailPage extends Component{
   async addFromAPI() {
     if (!this.state.item.key || !this.state.item.name) return;
 
-
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({"function":"add",
@@ -100,21 +99,24 @@ class DetailPage extends Component{
   onChangeGuestName(e) {
     var itemdata;
     if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-    if ("guests"       in itemdata        === false) {itemdata.guests                 = {}; }
+    if ("guests" in itemdata === false) {itemdata.guests = []; }
     itemdata.guests[e.target.id]["name"] = e.target.value;
-    var description = itemdata.guests[e.target.id]["name"];
-    // itemdata.guests.forEach(guest => {
-    //   description += guest.name.slice(0,1);
-    // });
+    var description = "";
+    itemdata.guests.forEach(guest => {
+      description += guest.name.slice(0,1);
+    });
     this.setState({item: { ...this.state.item, 'description':description, 'data': JSON.stringify(itemdata)}});
   }
   onChangeGuest(e) {
-    //var itemdata = {"guests":{"r1":{"name":"NA","c1":false,"c2":false,"c3":false,"c4":false}}}
     var itemdata;
     if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
     if ("guests"       in itemdata        === false) {itemdata.guests                 = []; }
-    //if (e.target.value in itemdata.guests === false) {itemdata.guests[e.target.value] = {}; }
     itemdata.guests[e.target.id][e.target.value] = e.target.checked;
+    var count = 0;
+    itemdata.guests.forEach(guest => {
+      if (guest[e.target.value] === true) {count++;}
+    });
+    itemdata[e.target.value] = count;
     this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
   }
 
@@ -206,15 +208,15 @@ class DetailPage extends Component{
         <div className="form-group woodytext">
           <label for="itemdesc">メモ</label>
           <input type='text' className="form-control" id="itemdesc" 
-            value={this.state.item.description}
-            onChange={e => this.setState({item: { ...this.state.item, 'description': e.target.value }})}
+            value={this.state.item.data}
+            onChange={e => this.setState({item: { ...this.state.item, 'data': e.target.value }})}
           />
         </div>
         <div className="form-group woodytext">
           <label for="itemdata">滞在者</label>
           <input type='text' className="form-control" id="itemdata" 
-            value={this.state.item.data}
-            onChange={e => this.setState({item: { ...this.state.item, 'data': e.target.value }})}
+            value={this.state.item.description}
+            onChange={e => this.setState({item: { ...this.state.item, 'description': e.target.value }})}
           />
         </div>
 
@@ -233,19 +235,19 @@ class DetailPage extends Component{
             onChange={this.onChangeTotal}
           />
           <input type='text' className="col-2 form-control" id="itemdata" 
-            value={itemdata.d1} placeholder="0"
+            value={itemdata.c1} placeholder="0"
             onChange={this.onChangeD1}
           />
           <input type='text' className="col-2 form-control" id="itemdata" 
-            value={itemdata.d2} placeholder="0"
+            value={itemdata.c2} placeholder="0"
             onChange={this.onChangeD2}
           />
           <input type='text' className="col-2 form-control" id="itemdata" 
-            value={itemdata.d3} placeholder="0"
+            value={itemdata.c3} placeholder="0"
             onChange={this.onChangeD3}
           />
           <input type='text' className="col-2 form-control" id="itemdata" 
-            value={itemdata.d4} placeholder="0"
+            value={itemdata.c4} placeholder="0"
             onChange={this.onChangeD4}
           />
         </div>
@@ -258,9 +260,10 @@ class DetailPage extends Component{
           <div className="col-2 form-group woodytext">
             <input
               type='text' className="form-control" 
-              //value={itemdata.guests[index].name} placeholder="名前"
-              value={guest.name} placeholder="名前"
+              value={itemdata.guests[index].name} placeholder="名前"
+              //value={guest.name} placeholder="名前"
               onChange={this.onChangeGuestName} id={index}
+              //onBlur={this.onChangeGuestName} id={index}
             />
           </div>
 
