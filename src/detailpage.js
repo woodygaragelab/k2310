@@ -101,8 +101,10 @@ class DetailPage extends Component{
     if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
     if ("guests" in itemdata === false) {itemdata.guests = []; }
     itemdata.guests[e.target.id]["name"] = e.target.value;
+    itemdata.total       = 0;
     var description = "";
     itemdata.guests.forEach(guest => {
+      if(guest.name !== "") {itemdata.total++}
       description += guest.name.slice(0,1);
     });
     this.setState({item: { ...this.state.item, 'description':description, 'data': JSON.stringify(itemdata)}});
@@ -114,7 +116,7 @@ class DetailPage extends Component{
     itemdata.guests[e.target.id][e.target.value] = e.target.checked;
     var count = 0;
     itemdata.guests.forEach(guest => {
-      if (guest[e.target.value] === true) {count++;}
+      if (guest[e.target.value] === true) { count++; }
     });
     itemdata[e.target.value] = count;
     this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
@@ -203,6 +205,12 @@ class DetailPage extends Component{
               placeholder="曜"
             />
           </div>
+          <div className="col-4">
+          </div>
+          <div className="col-2">
+            <Button onClick={this.handleAdd}>+DAY</Button>
+          </div>
+
         </div>
   
         <div className="form-group woodytext">
@@ -256,7 +264,7 @@ class DetailPage extends Component{
 
     { itemdata.guests.map((guest,index) => {
       return (
-        <div className="row" key={guest.name}>
+        <div className="row" key={index}>
           <div className="col-2 form-group woodytext">
             <input
               type='text' className="form-control" 
@@ -300,10 +308,7 @@ class DetailPage extends Component{
   {/* ====== BUTTON ============================================ */}
         <div className="row form-group woodytext">
           <div className="col-2">
-          <Button onClick={this.addGuest}>ADD GUEST</Button>
-          </div>
-          <div className="col-2">
-          <Button onClick={this.handleAdd}>ADD DAY</Button>
+          <Button onClick={this.addGuest}>+</Button>
           </div>
           <div className="col-6">
           </div>

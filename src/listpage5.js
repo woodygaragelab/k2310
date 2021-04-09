@@ -13,8 +13,8 @@ import { withRouter } from 'react-router-dom';
 //import { faHeart, faHome, faChartLine } from "@fortawesome/free-solid-svg-icons";
 
 const initialItemState = [
-  { key:'9901', sortkey:'1', group: '99', name: '土', description: '作業91',data:'{total:9}' },
-  { key:'9902', sortkey:'2', group: '99', name: '日', description: '作業92',data:'{total:8}' },
+  { key:'9901', sortkey:'1', group: '99', name: '土', description: '作業91',data:'{"total":9}' },
+  { key:'9902', sortkey:'2', group: '99', name: '日', description: '作業92',data:'{"total":8}' },
 ]
 
 class ListPage extends Component {
@@ -32,12 +32,9 @@ class ListPage extends Component {
     this.fetchItemsFromAPI("5");
   }
 
-  //async fetchItemsFromAPI() {
   async fetchItemsFromAPI(key) {
-
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    //var raw = JSON.stringify({"function":"list","key":this.state.month,"group":this.state.month});
     var raw = JSON.stringify({"function":"list","key":key,"group":key});
     var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
     fetch("https://pn2psx9qfd.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
@@ -56,27 +53,15 @@ class ListPage extends Component {
     });
   }
 
-  selectM4() {
-    this.props.history.push({
-      pathname: '/listpage4'
-    });
-  }
+  selectM4() { this.props.history.push({ pathname: '/listpage4' }); }
 
-  selectM5() {
-    this.fetchItemsFromAPI("5");
-  }
+  selectM5() { this.fetchItemsFromAPI("5"); }
 
-  selectM6() {
-    this.props.history.push({
-      pathname: '/listpage6'
-    });
-  }
+  selectM6() { this.props.history.push({ pathname: '/listpage6' }); }
 
   render() {
-
     return (
       <div className="mt-5 mb-5 container-fluid bg-color-1">
-        {/* <h1>{this.state.month}月予定</h1> */}
         <header className="fixed-top siteHeader">
             <div onClick={this.selectM4} className="col-2">4月</div>
             <div onClick={this.selectM5} className="col-2 siteHeaderSelected">5月</div>
@@ -85,24 +70,31 @@ class ListPage extends Component {
             <div className="col-2">8月</div>
         </header>
 
+        <form>
         {
-          this.state.items.map(item => (
-            <div className="card" key={item.key || item.name}>
-              <div className="card-body bg-color-2" onClick={() => this.editItem(item)}>
-                <div className="row">
-                  <div className="col-3">
-                    <div><h4>{item.sortkey}({item.name})</h4></div>
-                  </div>
-                  <div className="col-6">
-                    <div><h4>{item.description}</h4></div>
-                    <div>{item.data}</div>
-                  </div>
-                </div>              
-              </div>
-              
-            </div>              
-          ))
+          this.state.items.map((item,index) => {
+            var itemdata = {total:0};
+            if (item.data) { itemdata = JSON.parse(item.data); }
+            return (
+              <div className="card" key={item.key + item.sortkey}>
+                <div className="card-body bg-color-2" onClick={() => this.editItem(item)}>
+                  <div className="row">
+                    <div className="col-3">
+                      <div><h4>{item.sortkey}({item.name})</h4></div>
+                    </div>
+                    <div className="col-3">
+                      <div><h4>{item.description}</h4></div>
+                    </div>
+                    <div className="col-4">
+                      <div><h4>{itemdata.total}({itemdata.c1}-{itemdata.c2}-{itemdata.c3}-{itemdata.c4})</h4></div>
+                    </div>
+                  </div>              
+                </div>
+              </div>  
+            )              
+          })
         }
+        </form>
 
         <footer className="fixed-bottom siteFooter">
           <div>Schedule</div>

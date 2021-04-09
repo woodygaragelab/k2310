@@ -48,14 +48,9 @@ class ListPage extends Component {
 
   selectM4() {  this.fetchItemsFromAPI("4");  }
 
-  selectM5() {
-    this.props.history.push({ pathname: '/listpage5' });
-  }
+  selectM5() {  this.props.history.push({ pathname: '/listpage5' });  }
 
-  selectM6() {
-    this.setState({month:"4"});
-    this.fetchItemsFromAPI("4");
-  }
+  selectM6() {  this.props.history.push({ pathname: '/listpage6' });  }
 
   render() {
     return (
@@ -67,28 +62,27 @@ class ListPage extends Component {
             <div className="col-2">7月</div>
             <div className="col-2">8月</div>
         </header>
-        <form>
 
+        <form>
         {
           this.state.items.map((item,index) => {
             var itemdata = {total:0};
             if (item.data) { itemdata = JSON.parse(item.data); }
             return (
               <div className="card" key={item.key + item.sortkey}>
-              <div className="card-body bg-color-2" onClick={() => this.editItem(item)}>
-                <div className="row">
-                  <div className="col-3">
-                    <div><h4>{item.sortkey}({item.name})({index})</h4></div>
-                  </div>
-                  <div className="col-3">
-                    <div><h4>{item.description}</h4></div>
-                  </div>
-                  <div className="col-4">
-                    {/* <div>item.data={item.data}</div> */}
-                    <div><h4>{itemdata.total}({itemdata.c1}-{itemdata.c2}-{itemdata.c3}-{itemdata.c4})</h4></div>
-                  </div>
-                </div>              
-              </div>
+                <div className="card-body bg-color-2" onClick={() => this.editItem(item)}>
+                  <div className="row">
+                    <div className="col-3">
+                      <div><h4>{item.sortkey}({item.name})</h4></div>
+                    </div>
+                    <div className="col-3">
+                      <div><h4>{item.description}</h4></div>
+                    </div>
+                    <div className="col-4">
+                      <div><h4>{itemdata.total}({itemdata.c1}-{itemdata.c2}-{itemdata.c3}-{itemdata.c4})</h4></div>
+                    </div>
+                  </div>              
+                </div>
               </div>              
             )
           })
