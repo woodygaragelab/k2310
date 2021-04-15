@@ -42,3 +42,8 @@ h1 {
   align-items: center;
   justify-content: space-evenly;
 }
+
+h4 {
+  font-family: Kanit, sans-serif;
+  font-size: 1.0em;
+}
