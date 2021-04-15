@@ -14,6 +14,7 @@ class DetailPage extends Component{
     this.handleCancel  = this.handleCancel.bind(this)
     this.handleAdd     = this.handleAdd.bind(this)
     this.handleUpdate  = this.handleUpdate.bind(this)
+    this.handleNext    = this.handleNext.bind(this)
     this.onChangeTotal = this.onChangeTotal.bind(this)
     this.onChangeD1    = this.onChangeD1.bind(this)
     this.onChangeD2    = this.onChangeD2.bind(this)
@@ -27,6 +28,7 @@ class DetailPage extends Component{
     this.addFromAPI    = this.addFromAPI.bind(this);
     this.updateFromAPI = this.updateFromAPI.bind(this);
     this.next = this.next.bind(this);
+    this.getNext = this.getNext.bind(this);
     
     this.state = {
       month: this.props.location.state.month,
@@ -70,6 +72,27 @@ class DetailPage extends Component{
     var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
     fetch("https://pn2psx9qfd.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
     .catch(error => console.log('error', error));
+  }
+
+  async getFromAPI() {
+    if (!this.state.item.key || !this.state.item.sortkey) return;
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    var raw = JSON.stringify({"function":"get",
+                        "key":this.state.item.key,
+                        "sortkey":this.state.item.sortkey,
+                      });
+    var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
+    fetch("https://pn2psx9qfd.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
+      .then(response => response.text())
+      .then(response => {
+        const apiData = JSON.parse(response);
+        this.setState({item: apiData.items[0]});   
+    })
+    .catch(error => console.log('error', error));
+
+
   }
 
   onChangeTotal(e) {
@@ -173,6 +196,10 @@ class DetailPage extends Component{
     this.next();
   }
 
+  handleNext() {
+    this.getNext();
+  }
+
   returnToListPage() {
     var pathname = "/listpage"+ this.state.month;
     this.props.history.push({
@@ -198,6 +225,23 @@ class DetailPage extends Component{
     // let now = d.toISOString();
   }
 
+  getNext() {
+    const this_dd = this.state.item.sortkey;
+    const dd = parseInt(this_dd);
+    const mm = parseInt(this.state.item.key)-1;
+    var this_date = new Date(2021,mm,dd);
+    var next_date = new Date(2021,mm,dd);
+    next_date.setDate(this_date.getDate() + 1);
+    var next_dd   = ('0' + (next_date.getDate().toString())).slice(-2);
+
+    //var dayOfWeek = next_date.getDay();
+    //var next_name = [ "日", "月", "火", "水", "木", "金", "土" ][dayOfWeek] ;
+    this.setState( {item: { ...this.state.item, 'sortkey': next_dd }});
+
+    this.getFromAPI();
+
+  }
+
   render(){
 
     var itemdata = {total:0};
@@ -207,7 +251,7 @@ class DetailPage extends Component{
       <div className="container-fluid">
       <form>
         <div className="row">
-          <div className="form-group woodytext col-2">
+          <div className="form-group k2Text col-3">
             <label for="itemgroup">月</label>
             <input
               type='text' className="form-control" id="itemgroup" 
@@ -216,7 +260,7 @@ class DetailPage extends Component{
               placeholder="MM"
             />
           </div>
-          <div className="form-group woodytext col-2">
+          <div className="form-group k2Text col-3">
             <label for="itemsortkey">日</label>
             <input
               type='text' className="form-control" id="itemsortkey" 
@@ -225,7 +269,7 @@ class DetailPage extends Component{
               placeholder="DD"
             />
           </div>
-          <div className="form-group woodytext col-2">
+          <div className="form-group k2Text col-3">
             <label for="itemname">曜</label>
             <input
               type='text' className="form-control" id="itemname" 
@@ -234,17 +278,18 @@ class DetailPage extends Component{
               placeholder="曜"
             />
           </div>
-          <div className="col-4">
-          </div>
+          {/* <div className="col-1">
+          </div> */}
           <div className="col-2">
-            <Button onClick={this.handleAdd}>+DAY</Button>
+            {/* <Button onClick={this.handleAdd}>&gt</Button> */}
+            <Button onClick={this.handleNext}>next</Button>
           </div>
 
         </div>
   
 
-        <div className="row form-group woodytext">
-          <div className="col-3 mx-1">人数</div>
+        <div className="d-flex k2Text">
+          <div className="col-3">人数</div>
           <div className="col-2 mx-1">朝</div>
           <div className="col-2 mx-1">昼</div>
           <div className="col-2 mx-1">夕</div>
@@ -253,48 +298,52 @@ class DetailPage extends Component{
         </div>
 
   {/* ========== GUEST SUMMARY =============== */}
-        <div className="row form-group woodytext">
-          <div className="col-3 form-group woodytext">
+        <div className="mb-5 row form-group k2Text">
+
+          {/* 人数 */}
+          <div className="col-3 form-group k2Text">
             <input type='text' className="form-control" id="itemdata" 
               value={itemdata.total} placeholder="人数"
               onChange={this.onChangeTotal}
             />
           </div>
-          <div className="col-2 form-group woodytext">
+
+          {/* 朝昼夕泊 */}
+          <div className="col-2 form-group k2Text">
           <input type='text' className="form-control" id="itemdata" 
             value={itemdata.c1} placeholder="0"
             onChange={this.onChangeD1}
           />
           </div>
-          <div className="col-2 form-group woodytext">
+          <div className="col-2 form-group k2Text">
           <input type='text' className="form-control" id="itemdata" 
             value={itemdata.c2} placeholder="0"
             onChange={this.onChangeD2}
           />
           </div>
-          <div className="col-2 form-group woodytext">
+          <div className="col-2 form-group k2Text">
           <input type='text' className="form-control" id="itemdata" 
             value={itemdata.c3} placeholder="0"
             onChange={this.onChangeD3}
           />
           </div>
-          <div className="col-2 form-group woodytext">
+          <div className="col-2 k2Text">
           <input type='text' className="form-control" id="itemdata" 
             value={itemdata.c4} placeholder="0"
             onChange={this.onChangeD4}
           />
           </div>
-          <div className="col-1">
-          </div>
+
         </div>
 
-
+  
   {/* ========== GUEST LIST =============== */}
-
     { itemdata.guests.map((guest,index) => {
       return (
         <div className="row" key={index}>
-          <div className="col-3 form-group woodytext">
+
+          {/* 名前　*/}
+          <div className="col-3 form-group k2Text">
             <input
               type='text' className="form-control" 
               value={itemdata.guests[index].name} placeholder="名前"
@@ -302,35 +351,39 @@ class DetailPage extends Component{
             />
           </div>
 
-          <div className="col-1 mx-4 form-check form-check-inline">
+          {/* 朝昼夕泊 */}
+          <div className="col-1 mx-1 form-check form-check-inline">
             <input className="form-check-input" type="checkbox"
               checked={guest.c1}
               onChange={this.onChangeGuest} id={index} value="c1" 
             />
           </div>
-          <div className="col-1 mx-4 form-check form-check-inline">
+          <div className="col-1 mx-1 form-check form-check-inline">
             <input className="form-check-input" type="checkbox"
               checked={guest.c2}
               onChange={this.onChangeGuest} id={index} value="c2"
             />
           </div>
-          <div className="col-1 mx-3 form-check form-check-inline">
+          <div className="col-1 mx-1 form-check form-check-inline">
             <input className="form-check-input" type="checkbox"
               checked={guest.c3}
               onChange={this.onChangeGuest} id={index} value="c3"
             />
           </div>
-          <div className="col-1 ml-3 form-check form-check-inline">
+          <div className="col-1 ml-1 form-check form-check-inline">
             <input className="form-check-input" type="checkbox"
               checked={guest.c4}
               onChange={this.onChangeGuest} id={index} value="c4"
             />
           </div>
+
+          {/* 削除ボタン */}
           <div className="col-1">
-            <button type="button" onClick={() => this.deleteGuest(index)} id={index} className="btn btn-primary">
+            <button type="button" onClick={() => this.deleteGuest(index)} id={index} className="btn btn-outline-primary">
               <FontAwesomeIcon icon={faTrash} />
             </button> 
           </div>
+
           <div className="col-4">
           </div>
 
@@ -341,7 +394,7 @@ class DetailPage extends Component{
 
 
   {/* ====== + BUTTON ============================================ */}
-        <div className="row form-group woodytext">
+        <div className="row form-group k2Text">
           <div className="col-2">
           <Button onClick={this.addGuest}>+</Button>
           </div>
@@ -350,7 +403,7 @@ class DetailPage extends Component{
         </div>
 
   {/* ====== メモ欄 ============================================ */}
-        <div className="form-group woodytext">
+        <div className="mt-5 form-group k2Text">
           <label for="itemdesc">メモ</label>
           <input type='text' className="form-control" id="itemdesc" 
               value={itemdata.memo} placeholder="memo"
@@ -365,20 +418,20 @@ class DetailPage extends Component{
         onChange={e => this.setState({item: { ...this.state.item, 'data': e.target.value }})} */}
 
   {/* ====== OK BUTTON ============================================ */}
-         <div className="row form-group woodytext">
-          <div className="col-7">
+        <div className="mb-4 row k2Text">
+          <div className="col-xs-4">
           </div>
-          <div className="col-2 m-2">
+          <div className="col-xs-2 mx-2">
           <Button onClick={this.handleCancel}>CANCEL</Button>
           </div>
-          <div className="col-2 m-2">
+          <div className="col-xs-2 mx-2">
           <Button onClick={this.handleUpdate}>OK</Button>
           </div>          
         </div>
 
 
   {/* ====== item.data (for debug)================================ */}
-        <div className="form-group woodytext">
+        <div className="mt-4 form-group k2Text">
             <label for="itemdata">滞在者</label>
             <input type='text' className="form-control" id="itemdata" 
               value={this.state.item.description}

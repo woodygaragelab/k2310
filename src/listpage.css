@@ -2,19 +2,32 @@ h1 {
 /* テキストは基本(App.css）左寄せだが、h1（タイトル）だけ中央寄にする */
   text-align: center;
 }
-/* 隠しボタン用の色。背景色bg-color-1 と同じにする。*/
-/* .btn-secondary {
-  color: #fff;
-  background-color: #8392c9;
-  border-color: #8392c9;
-} */
+h4 {
+  font-family: Kanit, sans-serif;
+  font-size: 1.0em;
+}
+h5 {
+  font-family: Kanit, sans-serif;
+  font-size: 0.7em;
+}
 
-.siteHeader {
+
+/* .siteHeader {
   color: #ffffff;
   display: flex;
   width: 100%;
   font-family: Kanit, sans-serif;
   font-size: 1.5em;
+  align-items: center;
+  justify-content: space-evenly;
+} */
+
+.k2Header {
+  color: #ffffff;
+  display: flex;
+  width: 100%;
+  font-family: Kanit, sans-serif;
+  font-size: 1.2em;
   align-items: center;
   justify-content: space-evenly;
 }
@@ -43,7 +56,15 @@ h1 {
   justify-content: space-evenly;
 }
 
-h4 {
+.k2Font1 {
   font-family: Kanit, sans-serif;
   font-size: 1.0em;
+}
+.k2Font2 {
+  font-family: Kanit, sans-serif;
+  font-size: 0.7em;
+}
+.k2Font3 {
+  font-family: Kanit, sans-serif;
+  font-size: 0.5em;
 }

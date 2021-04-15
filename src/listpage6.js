@@ -49,7 +49,7 @@ class ListPage extends Component {
   render() {
     return (
       <div className="mt-5 mb-5 container-fluid bg-color-1">
-        <header className="fixed-top siteHeader k2310BgM6">
+        <header className="fixed-top k2Header k2310BgM6">
             <div onClick={this.selectM5} className="col-2">5月</div>
             <div onClick={this.selectM6} className="col-2 k2310FgM6">6月</div>
             <div onClick={this.selectM7} className="col-2">7月</div>
@@ -72,8 +72,11 @@ class ListPage extends Component {
                       <div><h4>{item.description}</h4></div>              {/* 宿泊者 */}
                     </div>
                     <div className="col-4">                   {/* 人数（朝-昼-夕-泊) */}
-                      <div><h4>{itemdata.total}({itemdata.c1}-{itemdata.c2}-{itemdata.c3}-{itemdata.c4})</h4></div>
-                    </div>
+                      <div>
+                        <h4>{itemdata.total}</h4>
+                        <h5>({itemdata.c1}-{itemdata.c2}-{itemdata.c3}-{itemdata.c4})</h5>
+                      </div>
+                  </div>
                   </div>              
                 </div>
               </div>              
