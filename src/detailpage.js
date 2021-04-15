@@ -3,6 +3,9 @@ import { withRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './detailpage.css';
 import Button from 'react-bootstrap/Button';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash} from "@fortawesome/free-solid-svg-icons";
+//import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 
 class DetailPage extends Component{
 
@@ -18,7 +21,9 @@ class DetailPage extends Component{
     this.onChangeD4    = this.onChangeD4.bind(this)
     this.onChangeGuestName = this.onChangeGuestName.bind(this);
     this.onChangeGuest = this.onChangeGuest.bind(this);
+    this.onChangeMemo  = this.onChangeMemo.bind(this);
     this.addGuest = this.addGuest.bind(this);
+    this.deleteGuest = this.deleteGuest.bind(this);
     this.addFromAPI    = this.addFromAPI.bind(this);
     this.updateFromAPI = this.updateFromAPI.bind(this);
     this.next = this.next.bind(this);
@@ -34,6 +39,7 @@ class DetailPage extends Component{
     if (!this.state.item.key || !this.state.item.name) return;
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
+    // group:月 key:月 sortkey:日
     var raw = JSON.stringify({"function":"add",
                         "group":this.state.item.group,
                         "key":this.state.item.key,
@@ -109,6 +115,14 @@ class DetailPage extends Component{
     });
     this.setState({item: { ...this.state.item, 'description':description, 'data': JSON.stringify(itemdata)}});
   }
+
+  onChangeMemo(e) {
+    var itemdata;
+    if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
+    itemdata["memo"] = e.target.value;
+    this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
+  }
+  
   onChangeGuest(e) {
     var itemdata;
     if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
@@ -128,6 +142,21 @@ class DetailPage extends Component{
     var guest = {"name":"","c1":false,"c2":false,"c3":false,"c4":false};
     itemdata.guests.push(guest);
     this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
+  }
+
+  deleteGuest(index) {
+    var itemdata;
+    if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
+    if ("guests"       in itemdata        === false) {itemdata.guests                 = []; }
+    itemdata.guests.splice(index, 1);        // guestから該当行を削除
+    
+    itemdata.total       = 0;
+    var description = "";
+    itemdata.guests.forEach(guest => {
+      if(guest.name !== "") {itemdata.total++}  // total人数を更新
+      description += guest.name.slice(0,1);     // description （滞在者）を更新
+    });
+    this.setState({item: { ...this.state.item, 'description':description, 'data': JSON.stringify(itemdata)}});
   }
 
   handleCancel() {
@@ -159,7 +188,7 @@ class DetailPage extends Component{
     const dd = parseInt(this_dd);
     const mm = parseInt(this.state.item.key)-1;
     var this_date = new Date(2021,mm,dd);
-    var next_date = new Date();
+    var next_date = new Date(2021,mm,dd);
     next_date.setDate(this_date.getDate() + 1);
     var next_dd   = ('0' + (next_date.getDate().toString())).slice(-2);
     var dayOfWeek = next_date.getDay();
@@ -213,112 +242,150 @@ class DetailPage extends Component{
 
         </div>
   
-        <div className="form-group woodytext">
-          <label for="itemdesc">メモ</label>
-          <input type='text' className="form-control" id="itemdesc" 
-            value={this.state.item.data}
-            onChange={e => this.setState({item: { ...this.state.item, 'data': e.target.value }})}
-          />
-        </div>
-        <div className="form-group woodytext">
-          <label for="itemdata">滞在者</label>
-          <input type='text' className="form-control" id="itemdata" 
-            value={this.state.item.description}
-            onChange={e => this.setState({item: { ...this.state.item, 'description': e.target.value }})}
-          />
-        </div>
 
         <div className="row form-group woodytext">
-          <div className="col-2">人数</div>
-          <div className="col-2">朝</div>
-          <div className="col-2">昼</div>
-          <div className="col-2">夕</div>
-          <div className="col-2">泊</div>
+          <div className="col-3 mx-1">人数</div>
+          <div className="col-2 mx-1">朝</div>
+          <div className="col-2 mx-1">昼</div>
+          <div className="col-2 mx-1">夕</div>
+          <div className="col-2 mx-1">泊</div>
+          <div className="col-1 mx-1"></div>
         </div>
 
   {/* ========== GUEST SUMMARY =============== */}
         <div className="row form-group woodytext">
-          <input type='text' className="col-2 form-control" id="itemdata" 
-            value={itemdata.total} placeholder="人数"
-            onChange={this.onChangeTotal}
-          />
-          <input type='text' className="col-2 form-control" id="itemdata" 
+          <div className="col-3 form-group woodytext">
+            <input type='text' className="form-control" id="itemdata" 
+              value={itemdata.total} placeholder="人数"
+              onChange={this.onChangeTotal}
+            />
+          </div>
+          <div className="col-2 form-group woodytext">
+          <input type='text' className="form-control" id="itemdata" 
             value={itemdata.c1} placeholder="0"
             onChange={this.onChangeD1}
           />
-          <input type='text' className="col-2 form-control" id="itemdata" 
+          </div>
+          <div className="col-2 form-group woodytext">
+          <input type='text' className="form-control" id="itemdata" 
             value={itemdata.c2} placeholder="0"
             onChange={this.onChangeD2}
           />
-          <input type='text' className="col-2 form-control" id="itemdata" 
+          </div>
+          <div className="col-2 form-group woodytext">
+          <input type='text' className="form-control" id="itemdata" 
             value={itemdata.c3} placeholder="0"
             onChange={this.onChangeD3}
           />
-          <input type='text' className="col-2 form-control" id="itemdata" 
+          </div>
+          <div className="col-2 form-group woodytext">
+          <input type='text' className="form-control" id="itemdata" 
             value={itemdata.c4} placeholder="0"
             onChange={this.onChangeD4}
           />
+          </div>
+          <div className="col-1">
+          </div>
         </div>
 
-  {/* ========== GUESTS =============== */}
+
+  {/* ========== GUEST LIST =============== */}
 
     { itemdata.guests.map((guest,index) => {
       return (
         <div className="row" key={index}>
-          <div className="col-2 form-group woodytext">
+          <div className="col-3 form-group woodytext">
             <input
               type='text' className="form-control" 
               value={itemdata.guests[index].name} placeholder="名前"
-              //value={guest.name} placeholder="名前"
               onChange={this.onChangeGuestName} id={index}
-              //onBlur={this.onChangeGuestName} id={index}
             />
           </div>
 
-          <div className="col-2 form-check form-check-inline">
+          <div className="col-1 mx-4 form-check form-check-inline">
             <input className="form-check-input" type="checkbox"
               checked={guest.c1}
               onChange={this.onChangeGuest} id={index} value="c1" 
             />
           </div>
-          <div className="col-2 form-check form-check-inline">
+          <div className="col-1 mx-4 form-check form-check-inline">
             <input className="form-check-input" type="checkbox"
               checked={guest.c2}
               onChange={this.onChangeGuest} id={index} value="c2"
             />
           </div>
-          <div className="col-2 form-check form-check-inline">
-          <input className="form-check-input" type="checkbox"
+          <div className="col-1 mx-3 form-check form-check-inline">
+            <input className="form-check-input" type="checkbox"
               checked={guest.c3}
               onChange={this.onChangeGuest} id={index} value="c3"
             />
           </div>
-          <div className="col-2 form-check form-check-inline">
-          <input className="form-check-input" type="checkbox"
+          <div className="col-1 ml-3 form-check form-check-inline">
+            <input className="form-check-input" type="checkbox"
               checked={guest.c4}
               onChange={this.onChangeGuest} id={index} value="c4"
             />
           </div>
+          <div className="col-1">
+            <button type="button" onClick={() => this.deleteGuest(index)} id={index} className="btn btn-primary">
+              <FontAwesomeIcon icon={faTrash} />
+            </button> 
+          </div>
+          <div className="col-4">
+          </div>
+
         </div>
       );
     })}
 
 
 
-  {/* ====== BUTTON ============================================ */}
+  {/* ====== + BUTTON ============================================ */}
         <div className="row form-group woodytext">
           <div className="col-2">
           <Button onClick={this.addGuest}>+</Button>
           </div>
-          <div className="col-6">
+          <div className="col-10">
           </div>
-          <div className="col-2">
+        </div>
+
+  {/* ====== メモ欄 ============================================ */}
+        <div className="form-group woodytext">
+          <label for="itemdesc">メモ</label>
+          <input type='text' className="form-control" id="itemdesc" 
+              value={itemdata.memo} placeholder="memo"
+              onChange={this.onChangeMemo}
+          />
+        </div>
+
+
+
+        {/* for debuug */}
+        {/* value={this.state.item.data}
+        onChange={e => this.setState({item: { ...this.state.item, 'data': e.target.value }})} */}
+
+  {/* ====== OK BUTTON ============================================ */}
+         <div className="row form-group woodytext">
+          <div className="col-7">
+          </div>
+          <div className="col-2 m-2">
           <Button onClick={this.handleCancel}>CANCEL</Button>
           </div>
-          <div className="col-2">
+          <div className="col-2 m-2">
           <Button onClick={this.handleUpdate}>OK</Button>
           </div>          
         </div>
+
+
+  {/* ====== item.data (for debug)================================ */}
+        <div className="form-group woodytext">
+            <label for="itemdata">滞在者</label>
+            <input type='text' className="form-control" id="itemdata" 
+              value={this.state.item.description}
+              onChange={e => this.setState({item: { ...this.state.item, 'description': e.target.value }})}
+            />
+        </div>
+
 
       </form>
     </div>

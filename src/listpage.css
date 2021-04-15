@@ -3,14 +3,13 @@ h1 {
   text-align: center;
 }
 /* 隠しボタン用の色。背景色bg-color-1 と同じにする。*/
-.btn-secondary {
+/* .btn-secondary {
   color: #fff;
   background-color: #8392c9;
   border-color: #8392c9;
-}
+} */
 
 .siteHeader {
-  background: #8992B9;
   color: #ffffff;
   display: flex;
   width: 100%;
@@ -20,8 +19,18 @@ h1 {
   justify-content: space-evenly;
 }
 
+/* header backgtound / foreground */
+.k2310BgM5 { background: #51ffae; }
+.k2310BgM6 { background: #aa89b9; }
+.k2310BgM7 { background: #73abff; }
+.k2310BgM8 { background: #02d11e; }
+.k2310FgM5 { background: #0fb668; }
+.k2310FgM6 { background: #743891; }
+.k2310FgM7 { background: #3e8bff; }
+.k2310FgM8 { background: #059919; }
+
 .siteHeaderSelected {
-  background: #444444;
+  background: #b6b6b6;
 }
 .siteFooter {
   background: #BDAFC9;

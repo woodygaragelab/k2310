@@ -15,14 +15,13 @@ class ListPage extends Component {
   constructor(props){
     super(props);
     this.fetchItemsFromAPI = this.fetchItemsFromAPI.bind(this);
-    this.selectM4 = this.selectM4.bind(this);
     this.selectM5 = this.selectM5.bind(this);
     this.selectM6 = this.selectM6.bind(this);
     this.state = {
       items: initialItemState,
-      month : "4"
+      month : "5"
     };  
-    this.fetchItemsFromAPI("4");
+    this.fetchItemsFromAPI("5");
   }
 
   async fetchItemsFromAPI(key) {
@@ -40,24 +39,17 @@ class ListPage extends Component {
   }
 
   editItem(item) {
-    this.props.history.push({
-      pathname: '/detailpage',
-      state: { month:this.state.month, item: item }
-    });
+    this.props.history.push({ pathname: '/detailpage', state: { month:this.state.month, item: item }  });
   }
 
-  selectM4() {  this.fetchItemsFromAPI("4");  }
-
-  selectM5() {  this.props.history.push({ pathname: '/listpage5' });  }
-
-  selectM6() {  this.props.history.push({ pathname: '/listpage6' });  }
+  selectM5() { this.props.history.push({ pathname: '/listpage5' }); }
+  selectM6() { this.props.history.push({ pathname: '/listpage6' }); }
 
   render() {
     return (
       <div className="mt-5 mb-5 container-fluid bg-color-1">
-        <header className="fixed-top siteHeader">
-            <div onClick={this.selectM4} className="col-2 siteHeaderSelected">4月</div>
-            <div onClick={this.selectM5} className="col-2">5月</div>
+        <header className="fixed-top siteHeader k2310BgM5">
+            <div onClick={this.selectM5} className="col-2  k2310FgM5">5月</div>
             <div onClick={this.selectM6} className="col-2">6月</div>
             <div className="col-2">7月</div>
             <div className="col-2">8月</div>
@@ -83,8 +75,8 @@ class ListPage extends Component {
                     </div>
                   </div>              
                 </div>
-              </div>              
-            )
+              </div>  
+            )              
           })
         }
         </form>
