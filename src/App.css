@@ -36,3 +36,50 @@
     transform: rotate(360deg);
   }
 }
+
+h1 {
+  /* テキストは基本(App.css）左寄せだが、h1（タイトル）だけ中央寄にする */
+    text-align: center;
+  }
+h4 {
+    font-family: Kanit, sans-serif;
+    font-size: 1.0em;
+  }
+h5 {
+    font-family: Kanit, sans-serif;
+    font-size: 0.7em;
+  }
+  
+
+.k2Header {
+  color: #ffffff;
+  display: flex;
+  width: 100%;
+  font-family: Kanit, sans-serif;
+  font-size: 1.2em;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+/* header backgtound / foreground */
+.k2310BgM5 { background: #51ffae; }
+.k2310BgM6 { background: #aa89b9; }
+.k2310BgM7 { background: #73abff; }
+.k2310BgM8 { background: #02d11e; }
+.k2310FgM5 { background: #0fb668; }
+.k2310FgM6 { background: #743891; }
+.k2310FgM7 { background: #3e8bff; }
+.k2310FgM8 { background: #059919; }
+
+.k2Font1 {
+  font-family: Kanit, sans-serif;
+  font-size: 1.0em;
+}
+.k2Font2 {
+  font-family: Kanit, sans-serif;
+  font-size: 0.7em;
+}
+.k2Font3 {
+  font-family: Kanit, sans-serif;
+  font-size: 0.5em;
+}

@@ -1,5 +1,5 @@
-h1 {
 /* テキストは基本(App.css）左寄せだが、h1（タイトル）だけ中央寄にする */
+/* h1 {
   text-align: center;
 }
 h4 {
@@ -9,7 +9,7 @@ h4 {
 h5 {
   font-family: Kanit, sans-serif;
   font-size: 0.7em;
-}
+} */
 
 
 /* .siteHeader {
@@ -22,7 +22,7 @@ h5 {
   justify-content: space-evenly;
 } */
 
-.k2Header {
+/* .k2Header {
   color: #ffffff;
   display: flex;
   width: 100%;
@@ -30,9 +30,9 @@ h5 {
   font-size: 1.2em;
   align-items: center;
   justify-content: space-evenly;
-}
+} */
 
-/* header backgtound / foreground */
+/* header backgtound / foreground
 .k2310BgM5 { background: #51ffae; }
 .k2310BgM6 { background: #aa89b9; }
 .k2310BgM7 { background: #73abff; }
@@ -40,11 +40,12 @@ h5 {
 .k2310FgM5 { background: #0fb668; }
 .k2310FgM6 { background: #743891; }
 .k2310FgM7 { background: #3e8bff; }
-.k2310FgM8 { background: #059919; }
+.k2310FgM8 { background: #059919; } */
 
-.siteHeaderSelected {
+/* .siteHeaderSelected {
   background: #b6b6b6;
-}
+} */
+
 .siteFooter {
   background: #BDAFC9;
   color: #ffffff;
@@ -56,7 +57,7 @@ h5 {
   justify-content: space-evenly;
 }
 
-.k2Font1 {
+/* .k2Font1 {
   font-family: Kanit, sans-serif;
   font-size: 1.0em;
 }
@@ -67,4 +68,4 @@ h5 {
 .k2Font3 {
   font-family: Kanit, sans-serif;
   font-size: 0.5em;
-}
+} */

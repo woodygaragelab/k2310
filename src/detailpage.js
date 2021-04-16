@@ -33,6 +33,7 @@ class DetailPage extends Component{
     this.state = {
       month: this.props.location.state.month,
       item: this.props.location.state.item,
+      devmode: false,                              // デバッグモード
     };
 
   }
@@ -233,13 +234,8 @@ class DetailPage extends Component{
     var next_date = new Date(2021,mm,dd);
     next_date.setDate(this_date.getDate() + 1);
     var next_dd   = ('0' + (next_date.getDate().toString())).slice(-2);
-
-    //var dayOfWeek = next_date.getDay();
-    //var next_name = [ "日", "月", "火", "水", "木", "金", "土" ][dayOfWeek] ;
     this.setState( {item: { ...this.state.item, 'sortkey': next_dd }});
-
     this.getFromAPI();
-
   }
 
   render(){
@@ -250,102 +246,40 @@ class DetailPage extends Component{
     return(
       <div className="container-fluid">
       <form>
-        <div className="row">
-          <div className="form-group k2Text col-3">
-            <label for="itemgroup">月</label>
-            <input
-              type='text' className="form-control" id="itemgroup" 
-              value={this.state.item.group}
-              onChange={e => this.setState({item: { ...this.state.item, 'key': e.target.value, 'group': e.target.value }})}
-              placeholder="MM"
-            />
-          </div>
-          <div className="form-group k2Text col-3">
-            <label for="itemsortkey">日</label>
-            <input
-              type='text' className="form-control" id="itemsortkey" 
-              value={this.state.item.sortkey}
-              onChange={e => this.setState({item: { ...this.state.item, 'sortkey': e.target.value }})}
-              placeholder="DD"
-            />
-          </div>
-          <div className="form-group k2Text col-3">
-            <label for="itemname">曜</label>
-            <input
-              type='text' className="form-control" id="itemname" 
-              value={this.state.item.name}
-              onChange={e => this.setState({item: { ...this.state.item, 'name': e.target.value }})}
-              placeholder="曜"
-            />
-          </div>
-          {/* <div className="col-1">
-          </div> */}
-          <div className="col-2">
-            {/* <Button onClick={this.handleAdd}>&gt</Button> */}
-            <Button onClick={this.handleNext}>next</Button>
-          </div>
-
-        </div>
-  
-
-        <div className="d-flex k2Text">
-          <div className="col-3">人数</div>
-          <div className="col-2 mx-1">朝</div>
-          <div className="col-2 mx-1">昼</div>
-          <div className="col-2 mx-1">夕</div>
-          <div className="col-2 mx-1">泊</div>
-          <div className="col-1 mx-1"></div>
+        <div className="form-group k2Text col-3">
+          <label for="itemkey">月 日（曜）</label>
+          <input
+              type='text' className="form-control" id="itemkey" 
+              value={this.state.item.group +"/"+ this.state.item.sortkey +"("+ this.state.item.name+")"}
+              readOnly
+          />
         </div>
 
-  {/* ========== GUEST SUMMARY =============== */}
-        <div className="mb-5 row form-group k2Text">
-
-          {/* 人数 */}
-          <div className="col-3 form-group k2Text">
-            <input type='text' className="form-control" id="itemdata" 
-              value={itemdata.total} placeholder="人数"
-              onChange={this.onChangeTotal}
-            />
-          </div>
-
-          {/* 朝昼夕泊 */}
-          <div className="col-2 form-group k2Text">
-          <input type='text' className="form-control" id="itemdata" 
-            value={itemdata.c1} placeholder="0"
-            onChange={this.onChangeD1}
-          />
-          </div>
-          <div className="col-2 form-group k2Text">
-          <input type='text' className="form-control" id="itemdata" 
-            value={itemdata.c2} placeholder="0"
-            onChange={this.onChangeD2}
-          />
-          </div>
-          <div className="col-2 form-group k2Text">
-          <input type='text' className="form-control" id="itemdata" 
-            value={itemdata.c3} placeholder="0"
-            onChange={this.onChangeD3}
-          />
-          </div>
-          <div className="col-2 k2Text">
-          <input type='text' className="form-control" id="itemdata" 
-            value={itemdata.c4} placeholder="0"
-            onChange={this.onChangeD4}
-          />
-          </div>
-
+        <div className="form-group k2Text col-xs-8 col-sm-6 col-md-3">
+          <label for="itemtotal">人数    （朝-昼-夕-泊）</label>
+          <input readOnly type='text' className="form-control" id="itemtotal" 
+              value={itemdata.total+"   ("+itemdata.c1+"-"+itemdata.c2+"-"+itemdata.c3+"-"+itemdata.c4+"）"}
+          /> 
         </div>
 
-  
+
   {/* ========== GUEST LIST =============== */}
+      <div className="d-flex">
+        <div className="col-2 ml-1">
+        滞在者
+        </div>
+        <div className="col-6">
+          (朝　　昼　　夕　　泊)
+        </div>
+      </div>
+  
     { itemdata.guests.map((guest,index) => {
       return (
         <div className="row" key={index}>
 
           {/* 名前　*/}
           <div className="col-3 form-group k2Text">
-            <input
-              type='text' className="form-control" 
+            <input type='text' className="form-control" 
               value={itemdata.guests[index].name} placeholder="名前"
               onChange={this.onChangeGuestName} id={index}
             />
@@ -404,7 +338,7 @@ class DetailPage extends Component{
 
   {/* ====== メモ欄 ============================================ */}
         <div className="mt-5 form-group k2Text">
-          <label for="itemdesc">メモ</label>
+          {/* <label for="itemdesc">メモ</label> */}
           <input type='text' className="form-control" id="itemdesc" 
               value={itemdata.memo} placeholder="memo"
               onChange={this.onChangeMemo}
@@ -413,9 +347,6 @@ class DetailPage extends Component{
 
 
 
-        {/* for debuug */}
-        {/* value={this.state.item.data}
-        onChange={e => this.setState({item: { ...this.state.item, 'data': e.target.value }})} */}
 
   {/* ====== OK BUTTON ============================================ */}
         <div className="mb-4 row k2Text">
@@ -430,14 +361,55 @@ class DetailPage extends Component{
         </div>
 
 
-  {/* ====== item.data (for debug)================================ */}
-        <div className="mt-4 form-group k2Text">
-            <label for="itemdata">滞在者</label>
-            <input type='text' className="form-control" id="itemdata" 
-              value={this.state.item.description}
-              onChange={e => this.setState({item: { ...this.state.item, 'description': e.target.value }})}
+
+
+  {/* ====== item.data (for debug)=============================>>> */}
+
+        <div className="mt-5" style={{ display: this.state.devmode ? '' : 'none' }}>
+          <h4>======== for dev =======</h4>
+          <div className="form-group k2Text col-3">
+            <label for="itemgroup">group:月</label>
+            <input type='text' className="form-control" id="itemgroup" 
+              value={this.state.item.group} placeholder="MM"
+              onChange={e => this.setState({item: { ...this.state.item, 'key': e.target.value, 'group': e.target.value }})}
             />
+          </div>
+          <div className="form-group k2Text col-3">
+            <label for="itemsortkey">sortkey:日</label>
+            <input type='text' className="form-control" id="itemsortkey" 
+              value={this.state.item.sortkey} placeholder="DD"
+              onChange={e => this.setState({item: { ...this.state.item, 'sortkey': e.target.value }})}
+            />
+          </div>
+          <div className="form-group k2Text col-3">
+            <label for="itemname">name:曜</label>
+            <input type='text' className="form-control" id="itemname" 
+              value={this.state.item.name} placeholder="曜"
+              onChange={e => this.setState({item: { ...this.state.item, 'name': e.target.value }})}
+            />
+          </div>
+          
+          <div className="col-2">
+            <Button onClick={this.handleAdd}>ADD NEXT</Button>
+            {/* <Button onClick={this.handleNext}>next</Button> */}
+          </div>
+
+          <div className="form-group k2Text col-6">
+            <label for="itemdesc">descriptoin:滞在者イニシャル</label>
+            <input readonly type='text' className="form-control" id="itemdesc" 
+              value={this.state.item.description}
+            />
+          </div>
+          <div className="form-group k2Text col-12 mb-5">
+            <label for="itemdata">data</label>
+            <input readonly type='text' className="form-control" id="itemdata" 
+              value={this.state.item.data}
+            />
+          </div>
+
         </div>
+  {/* <<<=================================== item.data (for debug) */}
+
 
 
       </form>
