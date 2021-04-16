@@ -66,16 +66,14 @@ class ListPage extends Component {
                 <div className="card-body bg-color-2" onClick={() => this.editItem(item)}>
                   <div className="row">
                     <div className="col-4">
-                      <div><h4>{item.sortkey}({item.name})</h4></div>    {/* 日（曜） */}
+                      <div className="k2Font1">{item.sortkey}({item.name})</div>  
                     </div>
                     <div className="col-4">
-                      <div><h4>{item.description}</h4></div>              {/* 宿泊者 */}
+                      <div className="k2Font1">{item.description}</div>              {/* 宿泊者 */}
                     </div>
                     <div className="col-4">                   {/* 人数（朝-昼-夕-泊) */}
-                      <div>
-                        <h4>{itemdata.total}</h4>
-                        <h5>({itemdata.c1}-{itemdata.c2}-{itemdata.c3}-{itemdata.c4})</h5>
-                      </div>
+                      <div className="k2Font2">{itemdata.total}</div>
+                      <div className="k2Font3">({itemdata.c1}-{itemdata.c2}-{itemdata.c3}-{itemdata.c4})</div>
                     </div>
                   </div>              
                 </div>

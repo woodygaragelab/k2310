@@ -15,11 +15,11 @@ class DetailPage extends Component{
     this.handleAdd     = this.handleAdd.bind(this)
     this.handleUpdate  = this.handleUpdate.bind(this)
     this.handleNext    = this.handleNext.bind(this)
-    this.onChangeTotal = this.onChangeTotal.bind(this)
-    this.onChangeD1    = this.onChangeD1.bind(this)
-    this.onChangeD2    = this.onChangeD2.bind(this)
-    this.onChangeD3    = this.onChangeD3.bind(this)
-    this.onChangeD4    = this.onChangeD4.bind(this)
+    // this.onChangeTotal = this.onChangeTotal.bind(this)
+    // this.onChangeD1    = this.onChangeD1.bind(this)
+    // this.onChangeD2    = this.onChangeD2.bind(this)
+    // this.onChangeD3    = this.onChangeD3.bind(this)
+    // this.onChangeD4    = this.onChangeD4.bind(this)
     this.onChangeGuestName = this.onChangeGuestName.bind(this);
     this.onChangeGuest = this.onChangeGuest.bind(this);
     this.onChangeMemo  = this.onChangeMemo.bind(this);
@@ -96,36 +96,36 @@ class DetailPage extends Component{
 
   }
 
-  onChangeTotal(e) {
-    var itemdata = {};
-    if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-    itemdata.total = e.target.value;
-    this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  }
-  onChangeD1(e) {
-    var itemdata = {}
-    if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-    itemdata.d1 = e.target.value;
-    this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  }
-  onChangeD2(e) {
-    var itemdata = {}
-    if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-    itemdata.d2 = e.target.value;
-    this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  }
-  onChangeD3(e) {
-    var itemdata = {}
-    if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-    itemdata.d3 = e.target.value;
-    this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  }
-  onChangeD4(e) {
-    var itemdata = {}
-    if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-    itemdata.d4 = e.target.value;
-    this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  }
+  // onChangeTotal(e) {
+  //   var itemdata = {};
+  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
+  //   itemdata.total = e.target.value;
+  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
+  // }
+  // onChangeD1(e) {
+  //   var itemdata = {}
+  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
+  //   itemdata.d1 = e.target.value;
+  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
+  // }
+  // onChangeD2(e) {
+  //   var itemdata = {}
+  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
+  //   itemdata.d2 = e.target.value;
+  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
+  // }
+  // onChangeD3(e) {
+  //   var itemdata = {}
+  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
+  //   itemdata.d3 = e.target.value;
+  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
+  // }
+  // onChangeD4(e) {
+  //   var itemdata = {}
+  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
+  //   itemdata.d4 = e.target.value;
+  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
+  // }
   onChangeGuestName(e) {
     var itemdata;
     if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
@@ -238,16 +238,17 @@ class DetailPage extends Component{
     this.getFromAPI();
   }
 
+  //
   render(){
 
     var itemdata = {total:0};
     if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);   }
 
     return(
-      <div className="container-fluid">
+      <div className="container-fluid mt-2">
       <form>
-        <div className="form-group k2Text col-3">
-          <label for="itemkey">月 日（曜）</label>
+        <div className="form-group k2Text col-5">
+          {/* <label for="itemkey">月 日（曜）</label> */}
           <input
               type='text' className="form-control" id="itemkey" 
               value={this.state.item.group +"/"+ this.state.item.sortkey +"("+ this.state.item.name+")"}
@@ -264,13 +265,12 @@ class DetailPage extends Component{
 
 
   {/* ========== GUEST LIST =============== */}
+      {/* <div className="d-flex">
+        <div className="col-4">滞在者</div>
+        <div className="col-6 mx-0"> (朝　昼　夕　泊)</div>
+      </div> */}
       <div className="d-flex">
-        <div className="col-2 ml-1">
-        滞在者
-        </div>
-        <div className="col-6">
-          (朝　　昼　　夕　　泊)
-        </div>
+        滞在者　　　　 (朝　昼　夕　泊)
       </div>
   
     { itemdata.guests.map((guest,index) => {
@@ -278,7 +278,7 @@ class DetailPage extends Component{
         <div className="row" key={index}>
 
           {/* 名前　*/}
-          <div className="col-3 form-group k2Text">
+          <div className="col-4 form-group k2Text">
             <input type='text' className="form-control" 
               value={itemdata.guests[index].name} placeholder="名前"
               onChange={this.onChangeGuestName} id={index}
@@ -318,8 +318,8 @@ class DetailPage extends Component{
             </button> 
           </div>
 
-          <div className="col-4">
-          </div>
+          {/* <div className="col-4">
+          </div> */}
 
         </div>
       );
@@ -345,18 +345,15 @@ class DetailPage extends Component{
           />
         </div>
 
-
-
-
   {/* ====== OK BUTTON ============================================ */}
         <div className="mb-4 row k2Text">
-          <div className="col-xs-4">
+          {/* <div className="col-xs-4">
+          </div> */}
+          <div className="col-xs-2 mx-2">
+           <Button onClick={this.handleCancel}>CANCEL</Button>
           </div>
           <div className="col-xs-2 mx-2">
-          <Button onClick={this.handleCancel}>CANCEL</Button>
-          </div>
-          <div className="col-xs-2 mx-2">
-          <Button onClick={this.handleUpdate}>OK</Button>
+           <Button onClick={this.handleUpdate}>OK</Button>
           </div>          
         </div>
 
