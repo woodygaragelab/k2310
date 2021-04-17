@@ -85,7 +85,7 @@ class ListPage extends Component {
         }
         </form>
 
-        <footer className="fixed-bottom siteFooter">
+        <footer className="fixed-bottom k2Footer">
           <div>Schedule</div>
           <div>ToDo</div>
           <div>Stock</div>

@@ -1,19 +1,19 @@
-.App {
+/* .App {
   text-align: center;
-}
+} */
 
-.App-logo {
+/* .App-logo {
   height: 40vmin;
   pointer-events: none;
-}
+} */
 
-@media (prefers-reduced-motion: no-preference) {
+/* @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-}
+} */
 
-.App-header {
+/* .App-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -22,55 +22,33 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
+} */
 
-.App-link {
+/* .App-link {
   color: #61dafb;
-}
+} */
 
-@keyframes App-logo-spin {
+/* @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
   }
-}
+} */
 
 h1 {
   /* テキストは基本(App.css）左寄せだが、h1（タイトル）だけ中央寄にする */
     text-align: center;
-  }
+}
 h4 {
     font-family: Kanit, sans-serif;
     font-size: 2.0em;
-  }
+}
 h5 {
     font-family: Kanit, sans-serif;
     font-size: 0.3em;
-  }
-  
-
-.k2Header {
-  color: #ffffff;
-  display: flex;
-  width: 100%;
-  font-family: Kanit, sans-serif;
-  font-size: 1.2em;
-  align-items: center;
-  justify-content: space-evenly;
 }
-
-/* header backgtound / foreground */
-.k2310BgM5 { background: #51ffae; }
-.k2310BgM6 { background: #aa89b9; }
-.k2310BgM7 { background: #73abff; }
-.k2310BgM8 { background: #02d11e; }
-.k2310FgM5 { background: #0fb668; }
-.k2310FgM6 { background: #743891; }
-.k2310FgM7 { background: #3e8bff; }
-.k2310FgM8 { background: #059919; }
-
 .k2Font1 {
   font-family: Kanit, sans-serif;
   font-size: 1.2em;
@@ -82,4 +60,36 @@ h5 {
 .k2Font3 {
   font-family: Kanit, sans-serif;
   font-size: 0.5em;
+}  
+
+.k2Header {
+  color: #ffffff;
+  display: flex;
+  width: 100%;
+  font-family: Kanit, sans-serif;
+  font-size: 1.2em;
+  align-items: center;
+  justify-content: space-evenly;
 }
+
+.k2Footer {
+  background: #BDAFC9;
+  color: #ffffff;
+  display: flex;
+  width: 100%;
+  font-family: Kanit, sans-serif;
+  font-size: 1.5em;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+/* header backgtound / foreground */
+.k2310BgM5 { background: #3ffc2e; }
+.k2310BgM6 { background: #aa89b9; }
+.k2310BgM7 { background: #73abff; }
+.k2310BgM8 { background: #00db1e; }
+.k2310FgM5 { background: #14db02; }
+.k2310FgM6 { background: #743891; }
+.k2310FgM7 { background: #3e8bff; }
+.k2310FgM8 { background: #00a116; }
+

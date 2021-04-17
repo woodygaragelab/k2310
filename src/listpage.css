@@ -1,15 +1,4 @@
-/* テキストは基本(App.css）左寄せだが、h1（タイトル）だけ中央寄にする */
-/* h1 {
-  text-align: center;
-}
-h4 {
-  font-family: Kanit, sans-serif;
-  font-size: 1.0em;
-}
-h5 {
-  font-family: Kanit, sans-serif;
-  font-size: 0.7em;
-} */
+/* スタイルは(App.css）で定義する。ここは不要 */
 
 
 /* .siteHeader {
@@ -46,7 +35,7 @@ h5 {
   background: #b6b6b6;
 } */
 
-.siteFooter {
+/* .siteFooter {
   background: #BDAFC9;
   color: #ffffff;
   display: flex;
@@ -55,7 +44,7 @@ h5 {
   font-size: 1.5em;
   align-items: center;
   justify-content: space-evenly;
-}
+} */
 
 /* .k2Font1 {
   font-family: Kanit, sans-serif;
