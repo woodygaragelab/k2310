@@ -15,16 +15,11 @@ class DetailPage extends Component{
     this.handleAdd     = this.handleAdd.bind(this)
     this.handleUpdate  = this.handleUpdate.bind(this)
     this.handleNext    = this.handleNext.bind(this)
-    // this.onChangeTotal = this.onChangeTotal.bind(this)
-    // this.onChangeD1    = this.onChangeD1.bind(this)
-    // this.onChangeD2    = this.onChangeD2.bind(this)
-    // this.onChangeD3    = this.onChangeD3.bind(this)
-    // this.onChangeD4    = this.onChangeD4.bind(this)
     this.onChangeGuestName = this.onChangeGuestName.bind(this);
     this.onChangeGuest = this.onChangeGuest.bind(this);
     this.onChangeMemo  = this.onChangeMemo.bind(this);
-    this.addGuest = this.addGuest.bind(this);
-    this.deleteGuest = this.deleteGuest.bind(this);
+    this.addGuest      = this.addGuest.bind(this);
+    this.deleteGuest   = this.deleteGuest.bind(this);
     this.addFromAPI    = this.addFromAPI.bind(this);
     this.updateFromAPI = this.updateFromAPI.bind(this);
     this.next = this.next.bind(this);
@@ -53,6 +48,7 @@ class DetailPage extends Component{
                       });
     var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
     fetch("https://pn2psx9qfd.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
+    .then(response => this.returnToListPage())
     .catch(error => console.log('error', error));
 
   }
@@ -75,14 +71,16 @@ class DetailPage extends Component{
     .catch(error => console.log('error', error));
   }
 
-  async getFromAPI() {
-    if (!this.state.item.key || !this.state.item.sortkey) return;
+  //async getFromAPI() {
+  async getFromAPI(dd) {
+      if (!this.state.item.key || !this.state.item.sortkey) return;
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({"function":"get",
                         "key":this.state.item.key,
-                        "sortkey":this.state.item.sortkey,
+//                        "sortkey":this.state.item.sortkey,
+                        "sortkey":dd,
                       });
     var requestOptions = {method: 'POST', headers: myHeaders, body: raw, redirect: 'follow' };
     fetch("https://pn2psx9qfd.execute-api.ap-northeast-1.amazonaws.com/dev", requestOptions)
@@ -93,39 +91,8 @@ class DetailPage extends Component{
     })
     .catch(error => console.log('error', error));
 
-
   }
 
-  // onChangeTotal(e) {
-  //   var itemdata = {};
-  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-  //   itemdata.total = e.target.value;
-  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  // }
-  // onChangeD1(e) {
-  //   var itemdata = {}
-  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-  //   itemdata.d1 = e.target.value;
-  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  // }
-  // onChangeD2(e) {
-  //   var itemdata = {}
-  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-  //   itemdata.d2 = e.target.value;
-  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  // }
-  // onChangeD3(e) {
-  //   var itemdata = {}
-  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-  //   itemdata.d3 = e.target.value;
-  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  // }
-  // onChangeD4(e) {
-  //   var itemdata = {}
-  //   if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
-  //   itemdata.d4 = e.target.value;
-  //   this.setState({item: { ...this.state.item, 'data': JSON.stringify(itemdata)}});
-  // }
   onChangeGuestName(e) {
     var itemdata;
     if (this.state.item.data) { itemdata = JSON.parse(this.state.item.data);  }
@@ -189,7 +156,6 @@ class DetailPage extends Component{
 
   handleUpdate() {
     this.updateFromAPI();
-    this.returnToListPage();
   }
 
   handleAdd() {
@@ -235,7 +201,7 @@ class DetailPage extends Component{
     next_date.setDate(this_date.getDate() + 1);
     var next_dd   = ('0' + (next_date.getDate().toString())).slice(-2);
     this.setState( {item: { ...this.state.item, 'sortkey': next_dd }});
-    this.getFromAPI();
+    this.getFromAPI(next_dd);
   }
 
   //
@@ -247,13 +213,13 @@ class DetailPage extends Component{
     return(
       <div className="container-fluid mt-2">
       <form>
-        <div className="form-group k2Text col-5">
-          {/* <label for="itemkey">月 日（曜）</label> */}
+        <div className="form-group k2Text col-3 d-flex">
           <input
               type='text' className="form-control" id="itemkey" 
               value={this.state.item.group +"/"+ this.state.item.sortkey +"("+ this.state.item.name+")"}
               readOnly
           />
+           {/* <Button onClick={this.handleNext}>next</Button> */}
         </div>
 
         <div className="form-group k2Text col-xs-8 col-sm-6 col-md-3">
@@ -265,10 +231,6 @@ class DetailPage extends Component{
 
 
   {/* ========== GUEST LIST =============== */}
-      {/* <div className="d-flex">
-        <div className="col-4">滞在者</div>
-        <div className="col-6 mx-0"> (朝　昼　夕　泊)</div>
-      </div> */}
       <div className="d-flex">
         滞在者　　　　 (朝　昼　夕　泊)
       </div>
@@ -338,7 +300,6 @@ class DetailPage extends Component{
 
   {/* ====== メモ欄 ============================================ */}
         <div className="mt-5 form-group k2Text">
-          {/* <label for="itemdesc">メモ</label> */}
           <input type='text' className="form-control" id="itemdesc" 
               value={itemdata.memo} placeholder="memo"
               onChange={this.onChangeMemo}
@@ -347,8 +308,6 @@ class DetailPage extends Component{
 
   {/* ====== OK BUTTON ============================================ */}
         <div className="mb-4 row k2Text">
-          {/* <div className="col-xs-4">
-          </div> */}
           <div className="col-xs-2 mx-2">
            <Button onClick={this.handleCancel}>CANCEL</Button>
           </div>
@@ -388,18 +347,17 @@ class DetailPage extends Component{
           
           <div className="col-2">
             <Button onClick={this.handleAdd}>ADD NEXT</Button>
-            {/* <Button onClick={this.handleNext}>next</Button> */}
           </div>
 
           <div className="form-group k2Text col-6">
             <label for="itemdesc">descriptoin:滞在者イニシャル</label>
-            <input readonly type='text' className="form-control" id="itemdesc" 
+            <input readOnly type='text' className="form-control" id="itemdesc" 
               value={this.state.item.description}
             />
           </div>
           <div className="form-group k2Text col-12 mb-5">
             <label for="itemdata">data</label>
-            <input readonly type='text' className="form-control" id="itemdata" 
+            <input readOnly type='text' className="form-control" id="itemdata" 
               value={this.state.item.data}
             />
           </div>

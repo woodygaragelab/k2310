@@ -6,9 +6,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { withRouter } from 'react-router-dom';
 
 const initialItemState = [ { key:'99', sortkey:'1', group: '99', name: '土', description: '91',data:'{"total":9}'}]
+// const scrollRef = useRef<HTMLDivEelement>(null);
 
 class ListPage extends Component {
-
   constructor(props){
     super(props);
     this.fetchItemsFromAPI = this.fetchItemsFromAPI.bind(this);
@@ -64,6 +64,7 @@ class ListPage extends Component {
 
             return (
               <div className="card" key={item.key + item.sortkey}>
+                {/* <div ref={scrollRef}/> */}
                 <div className="card-body" onClick={() => this.editItem(item)}>
                   <div className="row">
                     <div className="col-4">
