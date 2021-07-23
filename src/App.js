@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { withAuthenticator } from '@aws-amplify/ui-react';
-//import { AmplifySignOut } from '@aws-amplify/ui-react';
+import { AmplifySignOut } from '@aws-amplify/ui-react';
 //import { Auth } from 'aws-amplify';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ListPage5 from './listpage5';
