@@ -20,7 +20,7 @@ class App extends React.Component {
         <div>
         <Router>
         <Switch>
-            <Route exact={true} path='/' component={ListPage5}/>
+            <Route exact={true} path='/' component={ListPage7}/>
             <Route exact={true} path='/listpage5' component={ListPage5}/>
             <Route exact={true} path='/listpage6' component={ListPage6}/>
             <Route exact={true} path='/listpage7' component={ListPage7}/>
@@ -29,7 +29,7 @@ class App extends React.Component {
         </Switch>
         </Router>
         </div>      
-      {/* <AmplifySignOut /> */}
+      <AmplifySignOut />
     </div>
 
   )};
