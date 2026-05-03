@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: K2310 Calendar API
+
+Parameters:
+  GitHubToken:
+    Type: String
+    NoEcho: true
+    Description: GitHub personal access token (repo scope)
+  GitHubRepo:
+    Type: String
+    Description: GitHub repository URL (e.g. https://github.com/owner/k2310)
+  GitBranch:
+    Type: String
+    Default: main
+    Description: Branch to deploy
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 10
+    MemorySize: 256
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref CalendarTable
+  Api:
+    Cors:
+      AllowMethods: "'GET,PUT,DELETE,OPTIONS'"
+      AllowHeaders: "'Content-Type'"
+      AllowOrigin: "'*'"
+
+Resources:
+  CalendarTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: K2310CalendarEntries
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: date
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+
+  GetEntriesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/getEntries.handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref CalendarTable
+      Events:
+        GetEntries:
+          Type: Api
+          Properties:
+            Path: /entries
+            Method: get
+
+  PutEntryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/putEntry.handler
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref CalendarTable
+      Events:
+        PutEntry:
+          Type: Api
+          Properties:
+            Path: /entries/{date}
+            Method: put
+
+  DeleteEntryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/deleteEntry.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref CalendarTable
+      Events:
+        DeleteEntry:
+          Type: Api
+          Properties:
+            Path: /entries/{date}
+            Method: delete
+
+  FrontendApp:
+    Type: AWS::Amplify::App
+    Properties:
+      Name: k2310-frontend
+      Repository: !Ref GitHubRepo
+      AccessToken: !Ref GitHubToken
+      BuildSpec: |
+        version: 1
+        frontend:
+          phases:
+            preBuild:
+              commands:
+                - cd frontend && npm ci
+            build:
+              commands:
+                - npm run build
+          artifacts:
+            baseDirectory: frontend/dist
+            files:
+              - '**/*'
+          cache:
+            paths:
+              - frontend/node_modules/**/*
+      EnvironmentVariables:
+        - Name: VITE_API_URL
+          Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+
+  FrontendBranch:
+    Type: AWS::Amplify::Branch
+    Properties:
+      AppId: !GetAtt FrontendApp.AppId
+      BranchName: !Ref GitBranch
+      EnableAutoBuild: true
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+  TableName:
+    Description: DynamoDB table name
+    Value: !Ref CalendarTable
+  FrontendUrl:
+    Description: Amplify app URL
+    Value: !Sub 'https://${GitBranch}.${FrontendApp.DefaultDomain}'

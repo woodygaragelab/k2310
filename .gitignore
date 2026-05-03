@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+frontend/dist/
+backend/dist/
+
+# environment variables
+.env*.local
+frontend/.env.production
+
+# AWS SAM
+backend/.aws-sam/
+backend/samconfig.toml
+
+# misc
+.DS_Store
+*.log
