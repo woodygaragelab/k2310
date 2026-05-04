@@ -28,16 +28,17 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }))
 
     return {
-      statusCode: 204,
+      statusCode: 200,
       headers: CORS_HEADERS,
-      body: '',
+      body: JSON.stringify({ id }),
     }
   } catch (err) {
-    console.error(err)
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[deleteReservation]', message)
     return {
       statusCode: 500,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ error: 'Internal server error' }),
+      body: JSON.stringify({ error: message }),
     }
   }
 }

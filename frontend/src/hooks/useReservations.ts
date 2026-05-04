@@ -33,8 +33,12 @@ export function useReservations(year: number, month: number) {
   }, [])
 
   const removeReservation = useCallback(async (id: string) => {
-    await deleteReservation(id)
-    setReservations(prev => prev.filter(r => r.id !== id))
+    try {
+      await deleteReservation(id)
+      setReservations(prev => prev.filter(r => r.id !== id))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '削除に失敗しました')
+    }
   }, [])
 
   return { reservations, loading, error, addReservation, editReservation, removeReservation, reload: load }
