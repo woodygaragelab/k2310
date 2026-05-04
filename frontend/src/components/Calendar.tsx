@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ReservationModal } from './ReservationModal'
 import { useReservations } from '../hooks/useReservations'
+import { reservationColor } from '../utils/color'
 import type { Reservation } from '../types'
 import './Calendar.css'
 
@@ -88,7 +89,7 @@ export function Calendar() {
               {dayReservations.length > 0 && (
                 <ul className="name-chips">
                   {dayReservations.slice(0, 3).map(r => (
-                    <li key={r.id} className="name-chip">
+                    <li key={r.id} className="name-chip" style={{ background: reservationColor(r.id) }}>
                       <span
                         className="chip-name"
                         onClick={e => { e.stopPropagation(); setModalState({ type: 'edit', reservation: r }) }}

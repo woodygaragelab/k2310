@@ -22,73 +22,88 @@ Globals:
     MemorySize: 256
     Environment:
       Variables:
-        TABLE_NAME: !Ref CalendarTable
+        TABLE_NAME: !Ref ReservationsTable
   Api:
     Cors:
-      AllowMethods: "'GET,PUT,DELETE,OPTIONS'"
+      AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
       AllowHeaders: "'Content-Type'"
       AllowOrigin: "'*'"
 
 Resources:
-  CalendarTable:
+  ReservationsTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
-      TableName: K2310CalendarEntries
+      TableName: K2310Reservations
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - AttributeName: date
+        - AttributeName: id
           AttributeType: S
       KeySchema:
-        - AttributeName: date
+        - AttributeName: id
           KeyType: HASH
       SSESpecification:
         SSEEnabled: true
 
-  GetEntriesFunction:
+  GetReservationsFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: dist/
-      Handler: handlers/getEntries.handler
+      Handler: handlers/getReservations.handler
       Policies:
         - DynamoDBReadPolicy:
-            TableName: !Ref CalendarTable
+            TableName: !Ref ReservationsTable
       Events:
-        GetEntries:
+        GetReservations:
           Type: Api
           Properties:
-            Path: /entries
+            Path: /reservations
             Method: get
 
-  PutEntryFunction:
+  CreateReservationFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: dist/
-      Handler: handlers/putEntry.handler
+      Handler: handlers/createReservation.handler
       Policies:
         - DynamoDBWritePolicy:
-            TableName: !Ref CalendarTable
+            TableName: !Ref ReservationsTable
       Events:
-        PutEntry:
+        CreateReservation:
           Type: Api
           Properties:
-            Path: /entries/{date}
-            Method: put
+            Path: /reservations
+            Method: post
 
-  DeleteEntryFunction:
+  UpdateReservationFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: dist/
-      Handler: handlers/deleteEntry.handler
+      Handler: handlers/updateReservation.handler
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref CalendarTable
+        - DynamoDBWritePolicy:
+            TableName: !Ref ReservationsTable
       Events:
-        DeleteEntry:
+        UpdateReservation:
           Type: Api
           Properties:
-            Path: /entries/{date}
+            Path: /reservations/{id}
+            Method: put
+
+  DeleteReservationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/deleteReservation.handler
+      Policies:
+        - DynamoDBWritePolicy:
+            TableName: !Ref ReservationsTable
+      Events:
+        DeleteReservation:
+          Type: Api
+          Properties:
+            Path: /reservations/{id}
             Method: delete
 
   FrontendApp:
@@ -131,7 +146,7 @@ Outputs:
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
   TableName:
     Description: DynamoDB table name
-    Value: !Ref CalendarTable
+    Value: !Ref ReservationsTable
   FrontendUrl:
     Description: Amplify app URL
     Value: !Sub 'https://${GitBranch}.${FrontendApp.DefaultDomain}'
