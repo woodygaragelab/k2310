@@ -6,10 +6,11 @@ interface Props {
   defaultDate: string
   reservation?: Reservation
   onSave: (startDate: string, endDate: string, name: string) => void
+  onDelete?: () => void
   onClose: () => void
 }
 
-export function ReservationModal({ defaultDate, reservation, onSave, onClose }: Props) {
+export function ReservationModal({ defaultDate, reservation, onSave, onDelete, onClose }: Props) {
   const [startDate, setStartDate] = useState(reservation?.startDate ?? defaultDate)
   const [endDate, setEndDate] = useState(reservation?.endDate ?? defaultDate)
   const [name, setName] = useState(reservation?.name ?? '')
@@ -73,6 +74,9 @@ export function ReservationModal({ defaultDate, reservation, onSave, onClose }: 
           </div>
         </div>
         <div className="modal-footer">
+          {onDelete && (
+            <button className="btn-delete" onClick={() => { onDelete(); onClose() }}>削除</button>
+          )}
           <button className="btn-cancel" onClick={onClose}>キャンセル</button>
           <button className="btn-save" onClick={handleSave} disabled={!isValid}>保存</button>
         </div>

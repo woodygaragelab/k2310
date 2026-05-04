@@ -122,6 +122,7 @@ export function Calendar() {
           defaultDate={modalState.reservation.startDate}
           reservation={modalState.reservation}
           onSave={(s, e, n) => editReservation(modalState.reservation.id, s, e, n)}
+          onDelete={() => removeReservation(modalState.reservation.id)}
           onClose={() => setModalState(null)}
         />
       )}
