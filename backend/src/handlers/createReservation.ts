@@ -13,13 +13,14 @@ const CORS_HEADERS = {
 }
 
 export const handler: APIGatewayProxyHandler = async (event) => {
-  let startDate: string, endDate: string, name: string
+  let startDate: string, endDate: string, name: string, memo: string
   try {
     const body = JSON.parse(event.body ?? '{}')
     if (!body.startDate || !body.endDate || !body.name) throw new Error()
     startDate = body.startDate
     endDate = body.endDate
     name = String(body.name).trim()
+    memo = String(body.memo ?? '').trim()
     if (!name) throw new Error()
   } catch {
     return {
@@ -33,13 +34,13 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     const id = randomUUID()
     await client.send(new PutCommand({
       TableName: TABLE,
-      Item: { id, startDate, endDate, name },
+      Item: { id, startDate, endDate, name, memo },
     }))
 
     return {
       statusCode: 201,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ id, startDate, endDate, name }),
+      body: JSON.stringify({ id, startDate, endDate, name, memo }),
     }
   } catch (err) {
     console.error(err)

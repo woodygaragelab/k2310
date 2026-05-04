@@ -11,6 +11,7 @@ interface Reservation {
   startDate: string
   endDate: string
   name: string
+  memo: string
 }
 
 const store: Record<string, Reservation> = {}
@@ -60,12 +61,12 @@ const server = http.createServer((req, res) => {
     req.on('data', chunk => { body += chunk })
     req.on('end', () => {
       try {
-        const { startDate, endDate, name } = JSON.parse(body)
+        const { startDate, endDate, name, memo = '' } = JSON.parse(body)
         if (!startDate || !endDate || !name) {
           return json(res, 400, { error: 'startDate, endDate, name required' })
         }
         const id = String(nextId++)
-        const reservation: Reservation = { id, startDate, endDate, name }
+        const reservation: Reservation = { id, startDate, endDate, name, memo }
         store[id] = reservation
         json(res, 201, reservation)
       } catch {
@@ -85,11 +86,11 @@ const server = http.createServer((req, res) => {
     req.on('data', chunk => { body += chunk })
     req.on('end', () => {
       try {
-        const { startDate, endDate, name } = JSON.parse(body)
+        const { startDate, endDate, name, memo = '' } = JSON.parse(body)
         if (!startDate || !endDate || !name) {
           return json(res, 400, { error: 'startDate, endDate, name required' })
         }
-        store[id] = { id, startDate, endDate, name }
+        store[id] = { id, startDate, endDate, name, memo }
         json(res, 200, store[id])
       } catch {
         json(res, 400, { error: 'Invalid body' })

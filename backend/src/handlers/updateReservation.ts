@@ -21,13 +21,14 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }
   }
 
-  let startDate: string, endDate: string, name: string
+  let startDate: string, endDate: string, name: string, memo: string
   try {
     const body = JSON.parse(event.body ?? '{}')
     if (!body.startDate || !body.endDate || !body.name) throw new Error()
     startDate = body.startDate
     endDate = body.endDate
     name = String(body.name).trim()
+    memo = String(body.memo ?? '').trim()
     if (!name) throw new Error()
   } catch {
     return {
@@ -41,16 +42,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     await client.send(new UpdateCommand({
       TableName: TABLE,
       Key: { id },
-      UpdateExpression: 'SET startDate = :s, endDate = :e, #n = :n',
+      UpdateExpression: 'SET startDate = :s, endDate = :e, #n = :n, memo = :m',
       ExpressionAttributeNames: { '#n': 'name' },
-      ExpressionAttributeValues: { ':s': startDate, ':e': endDate, ':n': name },
+      ExpressionAttributeValues: { ':s': startDate, ':e': endDate, ':n': name, ':m': memo },
       ConditionExpression: 'attribute_exists(id)',
     }))
 
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ id, startDate, endDate, name }),
+      body: JSON.stringify({ id, startDate, endDate, name, memo }),
     }
   } catch (err: unknown) {
     if (err instanceof Error && err.name === 'ConditionalCheckFailedException') {

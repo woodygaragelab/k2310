@@ -5,7 +5,7 @@ import './NameModal.css'
 interface Props {
   defaultDate: string
   reservation?: Reservation
-  onSave: (startDate: string, endDate: string, name: string) => void
+  onSave: (startDate: string, endDate: string, name: string, memo: string) => void
   onDelete?: () => void
   onClose: () => void
 }
@@ -14,6 +14,7 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
   const [startDate, setStartDate] = useState(reservation?.startDate ?? defaultDate)
   const [endDate, setEndDate] = useState(reservation?.endDate ?? defaultDate)
   const [name, setName] = useState(reservation?.name ?? '')
+  const [memo, setMemo] = useState(reservation?.memo ?? '')
   const nameRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
 
   const handleSave = () => {
     if (!isValid) return
-    onSave(startDate, endDate, name.trim())
+    onSave(startDate, endDate, name.trim(), memo.trim())
     onClose()
   }
 
@@ -70,6 +71,16 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
               onKeyDown={handleKeyDown}
               placeholder="名前を入力"
               className="name-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">メモ</label>
+            <textarea
+              value={memo}
+              onChange={e => setMemo(e.target.value)}
+              placeholder="メモを入力（任意）"
+              className="memo-input"
+              rows={3}
             />
           </div>
         </div>

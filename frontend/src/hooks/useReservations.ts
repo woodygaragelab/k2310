@@ -22,13 +22,13 @@ export function useReservations(year: number, month: number) {
 
   useEffect(() => { load() }, [load])
 
-  const addReservation = useCallback(async (startDate: string, endDate: string, name: string) => {
-    const reservation = await createReservation(startDate, endDate, name)
+  const addReservation = useCallback(async (startDate: string, endDate: string, name: string, memo: string) => {
+    const reservation = await createReservation(startDate, endDate, name, memo)
     setReservations(prev => [...prev, reservation])
   }, [])
 
-  const editReservation = useCallback(async (id: string, startDate: string, endDate: string, name: string) => {
-    const updated = await updateReservation(id, startDate, endDate, name)
+  const editReservation = useCallback(async (id: string, startDate: string, endDate: string, name: string, memo: string) => {
+    const updated = await updateReservation(id, startDate, endDate, name, memo)
     setReservations(prev => prev.map(r => r.id === id ? updated : r))
   }, [])
 

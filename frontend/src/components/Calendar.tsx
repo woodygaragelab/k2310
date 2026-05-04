@@ -91,15 +91,13 @@ export function Calendar() {
               {dayReservations.length > 0 && (
                 <ul className="name-chips">
                   {dayReservations.slice(0, 3).map(r => (
-                    <li key={r.id} className="name-chip" style={{ background: reservationColor(r.id) }}>
-                      <span
-                        className="chip-name"
-                        onClick={e => { e.stopPropagation(); setModalState({ type: 'edit', reservation: r }) }}
-                      >{r.name}</span>
-                      <button
-                        className="chip-delete"
-                        onClick={e => { e.stopPropagation(); removeReservation(r.id) }}
-                      >×</button>
+                    <li
+                      key={r.id}
+                      className="name-chip"
+                      style={{ background: reservationColor(r.id) }}
+                      onClick={e => { e.stopPropagation(); setModalState({ type: 'edit', reservation: r }) }}
+                    >
+                      <span className="chip-name">{r.name}</span>
                     </li>
                   ))}
                   {dayReservations.length > 3 && (
@@ -123,7 +121,7 @@ export function Calendar() {
         <ReservationModal
           defaultDate={modalState.reservation.startDate}
           reservation={modalState.reservation}
-          onSave={(s, e, n) => editReservation(modalState.reservation.id, s, e, n)}
+          onSave={(s, e, n, m) => editReservation(modalState.reservation.id, s, e, n, m)}
           onDelete={() => removeReservation(modalState.reservation.id)}
           onClose={() => setModalState(null)}
         />

@@ -90,6 +90,21 @@
 
 .name-input:focus { border-color: #4f46e5; }
 
+.memo-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+  line-height: 1.5;
+}
+
+.memo-input:focus { border-color: #4f46e5; }
+
 .remove-btn {
   background: none;
   border: 1.5px solid #e0e0e0;

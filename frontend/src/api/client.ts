@@ -9,21 +9,21 @@ export async function fetchMonthReservations(year: number, month: number): Promi
   return res.json()
 }
 
-export async function createReservation(startDate: string, endDate: string, name: string): Promise<Reservation> {
+export async function createReservation(startDate: string, endDate: string, name: string, memo: string): Promise<Reservation> {
   const res = await fetch(`${API_BASE}/reservations`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ startDate, endDate, name }),
+    body: JSON.stringify({ startDate, endDate, name, memo }),
   })
   if (!res.ok) throw new Error(`Failed to create reservation: ${res.status}`)
   return res.json()
 }
 
-export async function updateReservation(id: string, startDate: string, endDate: string, name: string): Promise<Reservation> {
+export async function updateReservation(id: string, startDate: string, endDate: string, name: string, memo: string): Promise<Reservation> {
   const res = await fetch(`${API_BASE}/reservations/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ startDate, endDate, name }),
+    body: JSON.stringify({ startDate, endDate, name, memo }),
   })
   if (!res.ok) throw new Error(`Failed to update reservation: ${res.status}`)
   return res.json()

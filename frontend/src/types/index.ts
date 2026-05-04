@@ -3,4 +3,5 @@ export interface Reservation {
   startDate: string  // YYYY-MM-DD
   endDate: string    // YYYY-MM-DD
   name: string
+  memo?: string
 }
