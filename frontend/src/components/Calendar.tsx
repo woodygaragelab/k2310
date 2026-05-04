@@ -1,9 +1,14 @@
 import { useState } from 'react'
-import { NameModal } from './NameModal'
-import { useCalendarEntries } from '../hooks/useCalendarEntries'
+import { ReservationModal } from './ReservationModal'
+import { useReservations } from '../hooks/useReservations'
+import type { Reservation } from '../types'
 import './Calendar.css'
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']
+
+type ModalState =
+  | { type: 'new'; date: string }
+  | { type: 'edit'; reservation: Reservation }
 
 function toDateStr(year: number, month: number, day: number): string {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
@@ -13,9 +18,9 @@ export function Calendar() {
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
   const [month, setMonth] = useState(today.getMonth() + 1)
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const [modalState, setModalState] = useState<ModalState | null>(null)
 
-  const { entries, loading, error, saveEntry } = useCalendarEntries(year, month)
+  const { reservations, loading, error, addReservation, editReservation, removeReservation } = useReservations(year, month)
 
   const firstDay = new Date(year, month - 1, 1).getDay()
   const daysInMonth = new Date(year, month, 0).getDate()
@@ -36,17 +41,10 @@ export function Calendar() {
     ...Array(firstDay).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ]
-
   while (cells.length % 7 !== 0) cells.push(null)
 
-  const handleCellClick = (day: number) => {
-    setSelectedDate(toDateStr(year, month, day))
-  }
-
-  const handleSave = async (names: string[]) => {
-    if (!selectedDate) return
-    await saveEntry(selectedDate, names)
-  }
+  const getReservationsForDate = (dateStr: string) =>
+    reservations.filter(r => r.startDate <= dateStr && dateStr <= r.endDate)
 
   return (
     <div className="calendar-wrapper">
@@ -71,7 +69,7 @@ export function Calendar() {
             return <div key={`empty-${idx}`} className="cell empty" />
           }
           const dateStr = toDateStr(year, month, day)
-          const names = entries[dateStr] ?? []
+          const dayReservations = getReservationsForDate(dateStr)
           const isToday = dateStr === todayStr
           const weekday = (firstDay + day - 1) % 7
 
@@ -82,18 +80,27 @@ export function Calendar() {
                 'cell',
                 isToday ? 'today' : '',
                 weekday === 0 ? 'sun' : weekday === 6 ? 'sat' : '',
-                names.length > 0 ? 'has-names' : '',
+                dayReservations.length > 0 ? 'has-names' : '',
               ].filter(Boolean).join(' ')}
-              onClick={() => handleCellClick(day)}
+              onClick={() => setModalState({ type: 'new', date: dateStr })}
             >
               <span className="day-number">{day}</span>
-              {names.length > 0 && (
+              {dayReservations.length > 0 && (
                 <ul className="name-chips">
-                  {names.slice(0, 3).map((name, i) => (
-                    <li key={i} className="name-chip">{name}</li>
+                  {dayReservations.slice(0, 3).map(r => (
+                    <li key={r.id} className="name-chip">
+                      <span
+                        className="chip-name"
+                        onClick={e => { e.stopPropagation(); setModalState({ type: 'edit', reservation: r }) }}
+                      >{r.name}</span>
+                      <button
+                        className="chip-delete"
+                        onClick={e => { e.stopPropagation(); removeReservation(r.id) }}
+                      >×</button>
+                    </li>
                   ))}
-                  {names.length > 3 && (
-                    <li className="name-chip more">+{names.length - 3}</li>
+                  {dayReservations.length > 3 && (
+                    <li className="name-chip more">+{dayReservations.length - 3}</li>
                   )}
                 </ul>
               )}
@@ -102,12 +109,19 @@ export function Calendar() {
         })}
       </div>
 
-      {selectedDate && (
-        <NameModal
-          date={selectedDate}
-          initialNames={entries[selectedDate] ?? []}
-          onSave={handleSave}
-          onClose={() => setSelectedDate(null)}
+      {modalState?.type === 'new' && (
+        <ReservationModal
+          defaultDate={modalState.date}
+          onSave={addReservation}
+          onClose={() => setModalState(null)}
+        />
+      )}
+      {modalState?.type === 'edit' && (
+        <ReservationModal
+          defaultDate={modalState.reservation.startDate}
+          reservation={modalState.reservation}
+          onSave={(s, e, n) => editReservation(modalState.reservation.id, s, e, n)}
+          onClose={() => setModalState(null)}
         />
       )}
     </div>

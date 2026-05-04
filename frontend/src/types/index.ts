@@ -1,9 +1,6 @@
-export interface CalendarEntry {
-  date: string   // YYYY-MM-DD
-  names: string[]
-}
-
-export interface ApiResponse<T> {
-  data: T
-  error?: string
+export interface Reservation {
+  id: string
+  startDate: string  // YYYY-MM-DD
+  endDate: string    // YYYY-MM-DD
+  name: string
 }
