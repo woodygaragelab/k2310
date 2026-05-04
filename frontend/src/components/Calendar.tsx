@@ -45,7 +45,9 @@ export function Calendar() {
   while (cells.length % 7 !== 0) cells.push(null)
 
   const getReservationsForDate = (dateStr: string) =>
-    reservations.filter(r => r.startDate <= dateStr && dateStr <= r.endDate)
+    reservations
+      .filter(r => r.startDate <= dateStr && dateStr <= r.endDate)
+      .sort((a, b) => a.startDate.localeCompare(b.startDate))
 
   return (
     <div className="calendar-wrapper">
