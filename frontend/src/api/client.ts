@@ -31,5 +31,8 @@ export async function updateReservation(id: string, startDate: string, endDate: 
 
 export async function deleteReservation(id: string): Promise<void> {
   const res = await fetch(`${API_BASE}/reservations/${id}`, { method: 'DELETE' })
-  if (!res.ok) throw new Error(`Failed to delete reservation: ${res.status}`)
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error ?? `Failed to delete reservation: ${res.status}`)
+  }
 }

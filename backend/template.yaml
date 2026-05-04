@@ -46,14 +46,28 @@ Resources:
       SSESpecification:
         SSEEnabled: true
 
+  ReservationsTablePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Resource: !GetAtt ReservationsTable.Arn
+
   GetReservationsFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: dist/
       Handler: handlers/getReservations.handler
       Policies:
-        - DynamoDBReadPolicy:
-            TableName: !Ref ReservationsTable
+        - !Ref ReservationsTablePolicy
       Events:
         GetReservations:
           Type: Api
@@ -67,8 +81,7 @@ Resources:
       CodeUri: dist/
       Handler: handlers/createReservation.handler
       Policies:
-        - DynamoDBWritePolicy:
-            TableName: !Ref ReservationsTable
+        - !Ref ReservationsTablePolicy
       Events:
         CreateReservation:
           Type: Api
@@ -82,8 +95,7 @@ Resources:
       CodeUri: dist/
       Handler: handlers/updateReservation.handler
       Policies:
-        - DynamoDBWritePolicy:
-            TableName: !Ref ReservationsTable
+        - !Ref ReservationsTablePolicy
       Events:
         UpdateReservation:
           Type: Api
@@ -97,8 +109,7 @@ Resources:
       CodeUri: dist/
       Handler: handlers/deleteReservation.handler
       Policies:
-        - DynamoDBWritePolicy:
-            TableName: !Ref ReservationsTable
+        - !Ref ReservationsTablePolicy
       Events:
         DeleteReservation:
           Type: Api
