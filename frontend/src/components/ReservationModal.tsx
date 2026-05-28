@@ -5,7 +5,7 @@ import './NameModal.css'
 interface Props {
   defaultDate: string
   reservation?: Reservation
-  onSave: (startDate: string, endDate: string, name: string, memo: string) => void
+  onSave: (startDate: string, endDate: string, name: string, memo: string, isCancelled: boolean, isProvisional: boolean) => void
   onDelete?: () => void
   onClose: () => void
 }
@@ -15,6 +15,8 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
   const [endDate, setEndDate] = useState(reservation?.endDate ?? defaultDate)
   const [name, setName] = useState(reservation?.name ?? '')
   const [memo, setMemo] = useState(reservation?.memo ?? '')
+  const [isCancelled, setIsCancelled] = useState(reservation?.isCancelled ?? false)
+  const [isProvisional, setIsProvisional] = useState(reservation?.isProvisional ?? false)
   const nameRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -25,7 +27,7 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
 
   const handleSave = () => {
     if (!isValid) return
-    onSave(startDate, endDate, name.trim(), memo.trim())
+    onSave(startDate, endDate, name.trim(), memo.trim(), isCancelled, isProvisional)
     onClose()
   }
 
@@ -82,6 +84,26 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
               className="memo-input"
               rows={3}
             />
+          </div>
+          <div className="form-group form-group-checkbox">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={isCancelled}
+                onChange={e => setIsCancelled(e.target.checked)}
+              />
+              キャンセル
+            </label>
+          </div>
+          <div className="form-group form-group-checkbox">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={isProvisional}
+                onChange={e => setIsProvisional(e.target.checked)}
+              />
+              仮予約
+            </label>
           </div>
         </div>
         <div className="modal-footer">

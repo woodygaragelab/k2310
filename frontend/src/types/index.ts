@@ -4,4 +4,6 @@ export interface Reservation {
   endDate: string    // YYYY-MM-DD
   name: string
   memo?: string
+  isCancelled?: boolean
+  isProvisional?: boolean
 }

@@ -113,7 +113,7 @@ export function Calendar() {
       {modalState?.type === 'new' && (
         <ReservationModal
           defaultDate={modalState.date}
-          onSave={addReservation}
+          onSave={(s, e, n, m, ic, ip) => addReservation(s, e, n, m, ic, ip)}
           onClose={() => setModalState(null)}
         />
       )}
@@ -121,7 +121,7 @@ export function Calendar() {
         <ReservationModal
           defaultDate={modalState.reservation.startDate}
           reservation={modalState.reservation}
-          onSave={(s, e, n, m) => editReservation(modalState.reservation.id, s, e, n, m)}
+          onSave={(s, e, n, m, ic, ip) => editReservation(modalState.reservation.id, s, e, n, m, ic, ip)}
           onDelete={() => removeReservation(modalState.reservation.id)}
           onClose={() => setModalState(null)}
         />
