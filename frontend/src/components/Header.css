@@ -1,0 +1,33 @@
+.app-header {
+  background: #fff;
+  border-bottom: 1.5px solid #eeeeee;
+}
+
+.app-header-nav {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+  padding: 0 16px;
+}
+
+.app-header-link {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 16px 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.app-header-link:hover {
+  color: #4f46e5;
+}
+
+.app-header-link.active {
+  color: #4f46e5;
+  border-bottom-color: #4f46e5;
+}

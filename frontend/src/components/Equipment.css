@@ -1,0 +1,12 @@
+.equipment-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.equipment-placeholder {
+  text-align: center;
+  color: #888;
+  padding: 60px 0;
+  font-size: 1.1rem;
+}
