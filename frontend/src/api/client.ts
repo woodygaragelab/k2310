@@ -1,4 +1,4 @@
-import type { Reservation } from '../types'
+import type { Reservation, EquipmentItem } from '../types'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? '/api'
 
@@ -35,4 +35,10 @@ export async function deleteReservation(id: string): Promise<void> {
     const body = await res.json().catch(() => ({}))
     throw new Error(body.error ?? `Failed to delete reservation: ${res.status}`)
   }
+}
+
+export async function fetchEquipment(): Promise<EquipmentItem[]> {
+  const res = await fetch(`${API_BASE}/equipment`)
+  if (!res.ok) throw new Error(`Failed to fetch equipment: ${res.status}`)
+  return res.json()
 }
