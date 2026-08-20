@@ -42,3 +42,31 @@ export async function fetchEquipment(): Promise<EquipmentItem[]> {
   if (!res.ok) throw new Error(`Failed to fetch equipment: ${res.status}`)
   return res.json()
 }
+
+export async function createEquipment(item: Omit<EquipmentItem, 'id'>): Promise<EquipmentItem> {
+  const res = await fetch(`${API_BASE}/equipment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(item),
+  })
+  if (!res.ok) throw new Error(`Failed to create equipment: ${res.status}`)
+  return res.json()
+}
+
+export async function updateEquipment(id: string, item: Omit<EquipmentItem, 'id'>): Promise<EquipmentItem> {
+  const res = await fetch(`${API_BASE}/equipment/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(item),
+  })
+  if (!res.ok) throw new Error(`Failed to update equipment: ${res.status}`)
+  return res.json()
+}
+
+export async function deleteEquipment(id: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/equipment/${id}`, { method: 'DELETE' })
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}))
+    throw new Error(body.error ?? `Failed to delete equipment: ${res.status}`)
+  }
+}

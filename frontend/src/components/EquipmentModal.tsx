@@ -1,0 +1,124 @@
+import { useState, useRef, useEffect } from 'react'
+import type { EquipmentItem } from '../types'
+import './NameModal.css'
+
+const STATUS_OPTIONS: EquipmentItem['status'][] = ['使用可能', '貸出中', '修理中', '廃棄予定']
+
+interface Props {
+  item?: EquipmentItem
+  onSave: (item: Omit<EquipmentItem, 'id'>) => void
+  onDelete?: () => void
+  onClose: () => void
+}
+
+export function EquipmentModal({ item, onSave, onDelete, onClose }: Props) {
+  const [name, setName] = useState(item?.name ?? '')
+  const [category, setCategory] = useState(item?.category ?? '')
+  const [quantity, setQuantity] = useState(item?.quantity ?? 1)
+  const [location, setLocation] = useState(item?.location ?? '')
+  const [status, setStatus] = useState<EquipmentItem['status']>(item?.status ?? '使用可能')
+  const [notes, setNotes] = useState(item?.notes ?? '')
+  const nameRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    nameRef.current?.focus()
+  }, [])
+
+  const isValid = name.trim().length > 0 && category.trim().length > 0 && location.trim().length > 0 && quantity >= 0
+
+  const handleSave = () => {
+    if (!isValid) return
+    onSave({ name: name.trim(), category: category.trim(), quantity, location: location.trim(), status, notes: notes.trim() })
+    onClose()
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSave()
+    if (e.key === 'Escape') onClose()
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{item ? '備品を編集' : '備品を追加'}</h2>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          <div className="form-group">
+            <label className="form-label">備品名</label>
+            <input
+              ref={nameRef}
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="備品名を入力"
+              className="name-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">カテゴリ</label>
+            <input
+              type="text"
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="カテゴリを入力"
+              className="name-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">数量</label>
+            <input
+              type="number"
+              min={0}
+              value={quantity}
+              onChange={e => setQuantity(Number(e.target.value))}
+              onKeyDown={handleKeyDown}
+              className="name-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">保管場所</label>
+            <input
+              type="text"
+              value={location}
+              onChange={e => setLocation(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="保管場所を入力"
+              className="name-input"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">状態</label>
+            <select
+              value={status}
+              onChange={e => setStatus(e.target.value as EquipmentItem['status'])}
+              className="name-input"
+            >
+              {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="form-label">備考</label>
+            <textarea
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              placeholder="備考を入力（任意）"
+              className="memo-input"
+              rows={3}
+            />
+          </div>
+        </div>
+        <div className="modal-footer">
+          {onDelete && (
+            <button className="btn-delete" onClick={() => { onDelete(); onClose() }}>削除</button>
+          )}
+          <button className="btn-cancel" onClick={onClose}>キャンセル</button>
+          <button className="btn-save" onClick={handleSave} disabled={!isValid}>保存</button>
+        </div>
+      </div>
+    </div>
+  )
+}

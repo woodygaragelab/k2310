@@ -4,10 +4,36 @@
   padding: 24px 16px;
 }
 
+.equipment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 16px;
+}
+
 .equipment-title {
   font-size: 1.2rem;
   font-weight: 600;
-  margin: 0 0 16px;
+  margin: 0;
+}
+
+.equipment-add-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.equipment-add-btn:hover {
+  background: #4338ca;
+}
+
+.equipment-row {
+  cursor: pointer;
 }
 
 .equipment-placeholder {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { EquipmentItem } from '../types'
-import { fetchEquipment } from '../api/client'
+import { fetchEquipment, createEquipment, updateEquipment, deleteEquipment } from '../api/client'
 
 export function useEquipment() {
   const [items, setItems] = useState<EquipmentItem[]>([])
@@ -22,5 +22,20 @@ export function useEquipment() {
 
   useEffect(() => { load() }, [load])
 
-  return { items, loading, error, reload: load }
+  const addEquipment = useCallback(async (item: Omit<EquipmentItem, 'id'>) => {
+    const created = await createEquipment(item)
+    setItems(prev => [...prev, created])
+  }, [])
+
+  const editEquipment = useCallback(async (id: string, item: Omit<EquipmentItem, 'id'>) => {
+    const updated = await updateEquipment(id, item)
+    setItems(prev => prev.map(i => i.id === id ? updated : i))
+  }, [])
+
+  const removeEquipment = useCallback(async (id: string) => {
+    await deleteEquipment(id)
+    setItems(prev => prev.filter(i => i.id !== id))
+  }, [])
+
+  return { items, loading, error, reload: load, addEquipment, editEquipment, removeEquipment }
 }

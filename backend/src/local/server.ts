@@ -26,6 +26,7 @@ interface EquipmentItem {
 
 const store: Record<string, Reservation> = {}
 let nextId = 1
+let nextEquipmentId = 9
 
 const equipmentStore: Record<string, EquipmentItem> = {
   '1': { id: '1', name: 'プロジェクター', category: '映像機器', quantity: 2, location: '会議室A棚', status: '使用可能', notes: 'EPSON EB-W06' },
@@ -135,6 +136,60 @@ const server = http.createServer((req, res) => {
     return json(res, 200, Object.values(equipmentStore))
   }
 
+  // POST /equipment
+  if (req.method === 'POST' && url.pathname === '/equipment') {
+    let body = ''
+    req.on('data', chunk => { body += chunk })
+    req.on('end', () => {
+      try {
+        const { name, category, quantity, location, status, notes = '' } = JSON.parse(body)
+        if (!name || !category || !location || !status || typeof quantity !== 'number') {
+          return json(res, 400, { error: 'name, category, quantity, location, status required' })
+        }
+        const id = String(nextEquipmentId++)
+        const item: EquipmentItem = { id, name, category, quantity, location, status, notes }
+        equipmentStore[id] = item
+        json(res, 201, item)
+      } catch {
+        json(res, 400, { error: 'Invalid body' })
+      }
+    })
+    return
+  }
+
+  const equipmentIdMatch = url.pathname.match(/^\/equipment\/(.+)$/)
+
+  // PUT /equipment/:id
+  if (req.method === 'PUT' && equipmentIdMatch) {
+    const id = equipmentIdMatch[1]
+    if (!equipmentStore[id]) return json(res, 404, { error: 'Not found' })
+    let body = ''
+    req.on('data', chunk => { body += chunk })
+    req.on('end', () => {
+      try {
+        const { name, category, quantity, location, status, notes = '' } = JSON.parse(body)
+        if (!name || !category || !location || !status || typeof quantity !== 'number') {
+          return json(res, 400, { error: 'name, category, quantity, location, status required' })
+        }
+        equipmentStore[id] = { id, name, category, quantity, location, status, notes }
+        json(res, 200, equipmentStore[id])
+      } catch {
+        json(res, 400, { error: 'Invalid body' })
+      }
+    })
+    return
+  }
+
+  // DELETE /equipment/:id
+  if (req.method === 'DELETE' && equipmentIdMatch) {
+    const id = equipmentIdMatch[1]
+    if (!equipmentStore[id]) return json(res, 404, { error: 'Not found' })
+    delete equipmentStore[id]
+    res.writeHead(204, { 'Access-Control-Allow-Origin': '*' })
+    res.end()
+    return
+  }
+
   json(res, 404, { error: 'Not found' })
 })
 
@@ -146,4 +201,7 @@ server.listen(PORT, () => {
   console.log('  PUT    /reservations/:id')
   console.log('  DELETE /reservations/:id')
   console.log('  GET    /equipment')
+  console.log('  POST   /equipment')
+  console.log('  PUT    /equipment/:id')
+  console.log('  DELETE /equipment/:id')
 })

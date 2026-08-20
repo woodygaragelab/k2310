@@ -61,6 +61,37 @@ Resources:
               - dynamodb:DeleteItem
             Resource: !GetAtt ReservationsTable.Arn
 
+  EquipmentTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: K2310Equipment
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+
+  EquipmentTablePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Resource: !GetAtt EquipmentTable.Arn
+
   GetReservationsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -117,6 +148,74 @@ Resources:
             Path: /reservations/{id}
             Method: delete
 
+  GetEquipmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/getEquipment.handler
+      Environment:
+        Variables:
+          EQUIPMENT_TABLE_NAME: !Ref EquipmentTable
+      Policies:
+        - !Ref EquipmentTablePolicy
+      Events:
+        GetEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment
+            Method: get
+
+  CreateEquipmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/createEquipment.handler
+      Environment:
+        Variables:
+          EQUIPMENT_TABLE_NAME: !Ref EquipmentTable
+      Policies:
+        - !Ref EquipmentTablePolicy
+      Events:
+        CreateEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment
+            Method: post
+
+  UpdateEquipmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/updateEquipment.handler
+      Environment:
+        Variables:
+          EQUIPMENT_TABLE_NAME: !Ref EquipmentTable
+      Policies:
+        - !Ref EquipmentTablePolicy
+      Events:
+        UpdateEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment/{id}
+            Method: put
+
+  DeleteEquipmentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      Handler: handlers/deleteEquipment.handler
+      Environment:
+        Variables:
+          EQUIPMENT_TABLE_NAME: !Ref EquipmentTable
+      Policies:
+        - !Ref EquipmentTablePolicy
+      Events:
+        DeleteEquipment:
+          Type: Api
+          Properties:
+            Path: /equipment/{id}
+            Method: delete
+
   FrontendApp:
     Type: AWS::Amplify::App
     Properties:
@@ -158,6 +257,9 @@ Outputs:
   TableName:
     Description: DynamoDB table name
     Value: !Ref ReservationsTable
+  EquipmentTableName:
+    Description: DynamoDB equipment table name
+    Value: !Ref EquipmentTable
   FrontendUrl:
     Description: Amplify app URL
     Value: !Sub 'https://${GitBranch}.${FrontendApp.DefaultDomain}'
