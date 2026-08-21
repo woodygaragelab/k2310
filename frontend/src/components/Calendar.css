@@ -1,4 +1,5 @@
 .calendar-wrapper {
+  width: 100%;
   max-width: 900px;
   margin: 0 auto;
   padding: 24px 16px;
@@ -78,6 +79,7 @@
 
 .cell {
   min-height: 90px;
+  min-width: 0;
   border: 1.5px solid #eeeeee;
   border-radius: 8px;
   padding: 6px 8px;
@@ -85,6 +87,7 @@
   transition: all 0.15s;
   position: relative;
   background: #fff;
+  overflow: hidden;
 }
 
 .cell:hover {
@@ -159,8 +162,16 @@
   display: flex;
   align-items: center;
   gap: 2px;
+  min-width: 0;
 }
 
 .name-chip.more {
   background: #a5b4fc;
+}
+
+.name-chip .chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }

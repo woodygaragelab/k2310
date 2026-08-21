@@ -97,7 +97,7 @@ export function Calendar() {
                       style={{ background: r.isProvisional ? '#9e9e9e' : reservationColor(r.id) }}
                       onClick={e => { e.stopPropagation(); setModalState({ type: 'edit', reservation: r }) }}
                     >
-                      <span className="chip-name" style={r.isCancelled ? { textDecoration: 'line-through' } : undefined}>{r.name}</span>
+                      <span className="chip-name" style={r.isCancelled ? { textDecoration: 'line-through' } : undefined}>{r.name.slice(0, 2)}</span>
                     </li>
                   ))}
                   {dayReservations.length > 3 && (
