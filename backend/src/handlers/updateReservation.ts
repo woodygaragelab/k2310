@@ -21,7 +21,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }
   }
 
-  let startDate: string, endDate: string, name: string, memo: string, isCancelled: boolean, isProvisional: boolean
+  let startDate: string, endDate: string, name: string, memo: string, isCancelled: boolean, isProvisional: boolean, color: string
   try {
     const body = JSON.parse(event.body ?? '{}')
     if (!body.startDate || !body.endDate || !body.name) throw new Error()
@@ -31,6 +31,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     memo = String(body.memo ?? '').trim()
     isCancelled = Boolean(body.isCancelled)
     isProvisional = Boolean(body.isProvisional)
+    color = String(body.color ?? '').trim()
     if (!name) throw new Error()
   } catch {
     return {
@@ -44,16 +45,16 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     await client.send(new UpdateCommand({
       TableName: TABLE,
       Key: { id },
-      UpdateExpression: 'SET startDate = :s, endDate = :e, #n = :n, memo = :m, isCancelled = :ic, isProvisional = :ip',
+      UpdateExpression: 'SET startDate = :s, endDate = :e, #n = :n, memo = :m, isCancelled = :ic, isProvisional = :ip, color = :c',
       ExpressionAttributeNames: { '#n': 'name' },
-      ExpressionAttributeValues: { ':s': startDate, ':e': endDate, ':n': name, ':m': memo, ':ic': isCancelled, ':ip': isProvisional },
+      ExpressionAttributeValues: { ':s': startDate, ':e': endDate, ':n': name, ':m': memo, ':ic': isCancelled, ':ip': isProvisional, ':c': color },
       ConditionExpression: 'attribute_exists(id)',
     }))
 
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ id, startDate, endDate, name, memo, isCancelled, isProvisional }),
+      body: JSON.stringify({ id, startDate, endDate, name, memo, isCancelled, isProvisional, color }),
     }
   } catch (err: unknown) {
     if (err instanceof Error && err.name === 'ConditionalCheckFailedException') {

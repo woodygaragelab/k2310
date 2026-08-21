@@ -98,7 +98,7 @@ export function Calendar() {
                       <li
                         key={r.id}
                         className={['name-chip', edgeClass].filter(Boolean).join(' ')}
-                        style={{ background: r.isProvisional ? '#9e9e9e' : reservationColor(r.id) }}
+                        style={{ background: r.isProvisional ? '#9e9e9e' : (r.color || reservationColor(r.id)) }}
                         onClick={e => { e.stopPropagation(); setModalState({ type: 'edit', reservation: r }) }}
                       >
                         <span className="chip-name" style={r.isCancelled ? { textDecoration: 'line-through' } : undefined}>{r.name.slice(0, 2)}</span>
@@ -118,7 +118,7 @@ export function Calendar() {
       {modalState?.type === 'new' && (
         <ReservationModal
           defaultDate={modalState.date}
-          onSave={(s, e, n, m, ic, ip) => addReservation(s, e, n, m, ic, ip)}
+          onSave={(s, e, n, m, ic, ip, c) => addReservation(s, e, n, m, ic, ip, c)}
           onClose={() => setModalState(null)}
         />
       )}
@@ -126,7 +126,7 @@ export function Calendar() {
         <ReservationModal
           defaultDate={modalState.reservation.startDate}
           reservation={modalState.reservation}
-          onSave={(s, e, n, m, ic, ip) => editReservation(modalState.reservation.id, s, e, n, m, ic, ip)}
+          onSave={(s, e, n, m, ic, ip, c) => editReservation(modalState.reservation.id, s, e, n, m, ic, ip, c)}
           onDelete={() => removeReservation(modalState.reservation.id)}
           onClose={() => setModalState(null)}
         />

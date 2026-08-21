@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Reservation } from '../types'
+import { PRESET_COLORS, reservationColor } from '../utils/color'
 import './NameModal.css'
 
 interface Props {
   defaultDate: string
   reservation?: Reservation
-  onSave: (startDate: string, endDate: string, name: string, memo: string, isCancelled: boolean, isProvisional: boolean) => void
+  onSave: (startDate: string, endDate: string, name: string, memo: string, isCancelled: boolean, isProvisional: boolean, color: string) => void
   onDelete?: () => void
   onClose: () => void
 }
@@ -17,6 +18,7 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
   const [memo, setMemo] = useState(reservation?.memo ?? '')
   const [isCancelled, setIsCancelled] = useState(reservation?.isCancelled ?? false)
   const [isProvisional, setIsProvisional] = useState(reservation?.isProvisional ?? false)
+  const [color, setColor] = useState(reservation?.color ?? '')
   const nameRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -27,7 +29,7 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
 
   const handleSave = () => {
     if (!isValid) return
-    onSave(startDate, endDate, name.trim(), memo.trim(), isCancelled, isProvisional)
+    onSave(startDate, endDate, name.trim(), memo.trim(), isCancelled, isProvisional, color)
     onClose()
   }
 
@@ -84,6 +86,30 @@ export function ReservationModal({ defaultDate, reservation, onSave, onDelete, o
               className="memo-input"
               rows={3}
             />
+          </div>
+          <div className="form-group">
+            <label className="form-label">表示色</label>
+            <div className="color-swatches">
+              <button
+                type="button"
+                className={`color-swatch color-swatch-auto ${color === '' ? 'selected' : ''}`}
+                style={{ background: reservation ? reservationColor(reservation.id) : undefined }}
+                onClick={() => setColor('')}
+                title="自動"
+              >
+                {!reservation && '自動'}
+              </button>
+              {PRESET_COLORS.map(c => (
+                <button
+                  key={c}
+                  type="button"
+                  className={`color-swatch ${color === c ? 'selected' : ''}`}
+                  style={{ background: c }}
+                  onClick={() => setColor(c)}
+                  title={c}
+                />
+              ))}
+            </div>
           </div>
           <div className="form-group form-group-checkbox">
             <label className="checkbox-label">

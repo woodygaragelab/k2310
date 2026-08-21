@@ -8,3 +8,9 @@ export function reservationColor(id: string): string {
   const hue = (Math.abs(hash) * 137.508) % 360
   return `hsl(${Math.round(hue)}, 68%, 40%)`
 }
+
+// Manual color picker options, spaced evenly around the same hue/saturation/lightness
+// used by reservationColor() so a chosen color blends visually with auto-assigned ones.
+export const PRESET_COLORS: string[] = Array.from({ length: 12 }, (_, i) =>
+  `hsl(${i * 30}, 68%, 40%)`
+)

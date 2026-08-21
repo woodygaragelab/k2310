@@ -6,6 +6,7 @@ export interface Reservation {
   memo?: string
   isCancelled?: boolean
   isProvisional?: boolean
+  color?: string
 }
 
 export interface EquipmentItem {
