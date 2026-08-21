@@ -63,7 +63,8 @@
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  row-gap: 4px;
+  column-gap: 2px;
 }
 
 .weekday-header {
@@ -82,7 +83,7 @@
   min-width: 0;
   border: 1.5px solid #eeeeee;
   border-radius: 8px;
-  padding: 4px;
+  padding: 4px 2px;
   cursor: pointer;
   transition: all 0.15s;
   position: relative;
