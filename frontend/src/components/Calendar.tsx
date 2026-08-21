@@ -90,16 +90,21 @@ export function Calendar() {
               <span className="day-number">{day}</span>
               {dayReservations.length > 0 && (
                 <ul className="name-chips">
-                  {dayReservations.slice(0, 3).map(r => (
-                    <li
-                      key={r.id}
-                      className="name-chip"
-                      style={{ background: r.isProvisional ? '#9e9e9e' : reservationColor(r.id) }}
-                      onClick={e => { e.stopPropagation(); setModalState({ type: 'edit', reservation: r }) }}
-                    >
-                      <span className="chip-name" style={r.isCancelled ? { textDecoration: 'line-through' } : undefined}>{r.name.slice(0, 2)}</span>
-                    </li>
-                  ))}
+                  {dayReservations.slice(0, 3).map(r => {
+                    const isStart = dateStr === r.startDate
+                    const isEnd = dateStr === r.endDate
+                    const edgeClass = isStart && isEnd ? '' : isStart ? 'chip-start' : isEnd ? 'chip-end' : ''
+                    return (
+                      <li
+                        key={r.id}
+                        className={['name-chip', edgeClass].filter(Boolean).join(' ')}
+                        style={{ background: r.isProvisional ? '#9e9e9e' : reservationColor(r.id) }}
+                        onClick={e => { e.stopPropagation(); setModalState({ type: 'edit', reservation: r }) }}
+                      >
+                        <span className="chip-name" style={r.isCancelled ? { textDecoration: 'line-through' } : undefined}>{r.name.slice(0, 2)}</span>
+                      </li>
+                    )
+                  })}
                   {dayReservations.length > 3 && (
                     <li className="name-chip more">+{dayReservations.length - 3}</li>
                   )}

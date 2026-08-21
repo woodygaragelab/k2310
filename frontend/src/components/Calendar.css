@@ -82,7 +82,7 @@
   min-width: 0;
   border: 1.5px solid #eeeeee;
   border-radius: 8px;
-  padding: 6px 8px;
+  padding: 4px;
   cursor: pointer;
   transition: all 0.15s;
   position: relative;
@@ -141,7 +141,7 @@
   font-weight: 600;
   color: #374151;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .name-chips {
@@ -157,7 +157,7 @@
   font-size: 0.72rem;
   color: #fff;
   border-radius: 4px;
-  padding: 1px 4px 1px 5px;
+  padding: 1px 2px;
   max-width: 100%;
   display: flex;
   align-items: center;
@@ -167,6 +167,16 @@
 
 .name-chip.more {
   background: #a5b4fc;
+}
+
+.name-chip.chip-start {
+  width: 50%;
+  align-self: flex-end;
+}
+
+.name-chip.chip-end {
+  width: 50%;
+  align-self: flex-start;
 }
 
 .name-chip .chip-name {
