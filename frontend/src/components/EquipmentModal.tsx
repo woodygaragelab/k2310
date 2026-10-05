@@ -107,7 +107,7 @@ export function EquipmentModal({ item, onSave, onDelete, onClose }: Props) {
               onChange={e => setNotes(e.target.value)}
               placeholder="備考を入力（任意）"
               className="memo-input"
-              rows={3}
+              rows={10}
             />
           </div>
         </div>
