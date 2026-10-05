@@ -7,7 +7,7 @@
 .equipment-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   margin: 0 0 16px;
 }
 
@@ -34,9 +34,10 @@
 
 .equipment-search {
   box-sizing: border-box;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
+  max-width: 400px;
   padding: 8px 12px;
-  margin: 0 0 16px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 0.9rem;

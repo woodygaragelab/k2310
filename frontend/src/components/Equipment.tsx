@@ -21,16 +21,15 @@ export function Equipment() {
   return (
     <div className="equipment-wrapper">
       <div className="equipment-header">
-        <h2 className="equipment-title">備品一覧</h2>
-        <button className="equipment-add-btn" onClick={() => setModalState({ open: true })}>+ 備品を追加</button>
+        <input
+          className="equipment-search"
+          type="search"
+          placeholder="備品名・備考で検索"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+        <button className="equipment-add-btn" onClick={() => setModalState({ open: true })}>追加</button>
       </div>
-      <input
-        className="equipment-search"
-        type="search"
-        placeholder="備品名・備考で検索"
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-      />
       <table className="equipment-table">
         <thead>
           <tr>
