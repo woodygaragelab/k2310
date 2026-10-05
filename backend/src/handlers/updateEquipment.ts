@@ -24,6 +24,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
   }
 
   let name: string, category: string, quantity: number, location: string, status: string, notes: string
+  let attachment: { key: string; name: string } | undefined
   try {
     const body = JSON.parse(event.body ?? '{}')
     name = String(body.name ?? '').trim()
@@ -32,6 +33,12 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     location = String(body.location ?? '').trim()
     status = String(body.status ?? '')
     notes = String(body.notes ?? '').trim()
+    if (body.attachment) {
+      const key = String(body.attachment.key ?? '')
+      const fileName = String(body.attachment.name ?? '').trim()
+      if (!key.startsWith('equipment/') || !fileName) throw new Error()
+      attachment = { key, name: fileName }
+    }
     if (!name || !Number.isFinite(quantity) || quantity < 0 || !VALID_STATUSES.includes(status)) throw new Error()
   } catch {
     return {
@@ -45,16 +52,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     await client.send(new UpdateCommand({
       TableName: TABLE,
       Key: { id },
-      UpdateExpression: 'SET #n = :n, category = :c, quantity = :q, #l = :l, #s = :s, notes = :notes',
+      UpdateExpression:
+        'SET #n = :n, category = :c, quantity = :q, #l = :l, #s = :s, notes = :notes' +
+        (attachment ? ', attachment = :a' : ' REMOVE attachment'),
       ExpressionAttributeNames: { '#n': 'name', '#l': 'location', '#s': 'status' },
-      ExpressionAttributeValues: { ':n': name, ':c': category, ':q': quantity, ':l': location, ':s': status, ':notes': notes },
+      ExpressionAttributeValues: {
+        ':n': name, ':c': category, ':q': quantity, ':l': location, ':s': status, ':notes': notes,
+        ...(attachment && { ':a': attachment }),
+      },
       ConditionExpression: 'attribute_exists(id)',
     }))
 
     return {
       statusCode: 200,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ id, name, category, quantity, location, status, notes }),
+      body: JSON.stringify({ id, name, category, quantity, location, status, notes, attachment }),
     }
   } catch (err: unknown) {
     if (err instanceof Error && err.name === 'ConditionalCheckFailedException') {

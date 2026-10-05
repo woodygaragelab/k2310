@@ -1,4 +1,4 @@
-import type { Reservation, EquipmentItem } from '../types'
+import type { Reservation, EquipmentItem, EquipmentAttachment } from '../types'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? '/api'
 
@@ -61,6 +61,25 @@ export async function updateEquipment(id: string, item: Omit<EquipmentItem, 'id'
   })
   if (!res.ok) throw new Error(`Failed to update equipment: ${res.status}`)
   return res.json()
+}
+
+export function equipmentAttachmentUrl(id: string): string {
+  return `${API_BASE}/equipment/${id}/attachment`
+}
+
+export async function uploadEquipmentAttachment(file: File): Promise<EquipmentAttachment> {
+  const contentType = file.type || 'application/octet-stream'
+  const res = await fetch(`${API_BASE}/equipment/upload-url`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contentType }),
+  })
+  if (!res.ok) throw new Error(`Failed to get upload url: ${res.status}`)
+  const { uploadUrl, key } = await res.json()
+
+  const put = await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': contentType }, body: file })
+  if (!put.ok) throw new Error(`Failed to upload file: ${put.status}`)
+  return { key, name: file.name }
 }
 
 export async function deleteEquipment(id: string): Promise<void> {

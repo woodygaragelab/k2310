@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
-import type { EquipmentItem } from '../types'
+import type { EquipmentItem, EquipmentAttachment } from '../types'
+import { equipmentAttachmentUrl, uploadEquipmentAttachment } from '../api/client'
 import './NameModal.css'
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 const STATUS_OPTIONS: EquipmentItem['status'][] = ['使用可能', '貸出中', '修理中', '廃棄予定']
 
@@ -19,17 +22,40 @@ export function EquipmentModal({ item, defaultCategory, onSave, onDelete, onClos
   const [location, setLocation] = useState(item?.location ?? '')
   const [status, setStatus] = useState<EquipmentItem['status']>(item?.status ?? '使用可能')
   const [notes, setNotes] = useState(item?.notes ?? '')
+  const [attachment, setAttachment] = useState<EquipmentAttachment | undefined>(item?.attachment)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
   const nameRef = useRef<HTMLInputElement>(null)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     nameRef.current?.focus()
   }, [])
 
-  const isValid = name.trim().length > 0 && category.trim().length > 0 && location.trim().length > 0 && quantity >= 0
+  const isValid = name.trim().length > 0 && category.trim().length > 0 && location.trim().length > 0 && quantity >= 0 && !uploading
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    if (file.size > MAX_FILE_SIZE) {
+      setUploadError('ファイルサイズは10MB以下にしてください')
+      return
+    }
+    setUploading(true)
+    setUploadError('')
+    try {
+      setAttachment(await uploadEquipmentAttachment(file))
+    } catch {
+      setUploadError('ファイルのアップロードに失敗しました')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const handleSave = () => {
     if (!isValid) return
-    onSave({ name: name.trim(), category: category.trim(), quantity, location: location.trim(), status, notes: notes.trim() })
+    onSave({ name: name.trim(), category: category.trim(), quantity, location: location.trim(), status, notes: notes.trim(), attachment })
     onClose()
   }
 
@@ -110,6 +136,28 @@ export function EquipmentModal({ item, defaultCategory, onSave, onDelete, onClos
               className="memo-input"
               rows={10}
             />
+          </div>
+          <div className="form-group">
+            <label className="form-label">添付ファイル</label>
+            <div className="attachment-row">
+              {attachment && (
+                item && attachment.key === item.attachment?.key ? (
+                  <a className="attachment-link" href={equipmentAttachmentUrl(item.id)} target="_blank" rel="noreferrer">
+                    {attachment.name}
+                  </a>
+                ) : (
+                  <span className="attachment-link">{attachment.name}（保存後にリンクが有効になります）</span>
+                )
+              )}
+              <input ref={fileRef} type="file" hidden onChange={handleFileChange} />
+              <button type="button" className="attachment-btn" disabled={uploading} onClick={() => fileRef.current?.click()}>
+                {uploading ? 'アップロード中...' : attachment ? 'ファイルを変更' : 'ファイルを添付'}
+              </button>
+              {attachment && !uploading && (
+                <button type="button" className="attachment-btn" onClick={() => setAttachment(undefined)}>削除</button>
+              )}
+            </div>
+            {uploadError && <span className="attachment-error">{uploadError}</span>}
           </div>
         </div>
         <div className="modal-footer">

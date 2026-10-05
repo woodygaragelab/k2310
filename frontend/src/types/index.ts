@@ -17,4 +17,10 @@ export interface EquipmentItem {
   location: string
   status: '使用可能' | '貸出中' | '修理中' | '廃棄予定'
   notes?: string
+  attachment?: EquipmentAttachment
+}
+
+export interface EquipmentAttachment {
+  key: string
+  name: string
 }

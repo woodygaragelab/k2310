@@ -23,6 +23,7 @@ export const handler: APIGatewayProxyHandler = async () => {
       location: item.location,
       status: item.status,
       notes: item.notes ?? '',
+      attachment: item.attachment,
     }))
 
     return {

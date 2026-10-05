@@ -3,6 +3,7 @@
  * 起動: npm run dev
  */
 import * as http from 'http'
+import { randomUUID } from 'crypto'
 
 const PORT = 3001
 
@@ -23,7 +24,11 @@ interface EquipmentItem {
   location: string
   status: string
   notes: string
+  attachment?: { key: string; name: string }
 }
+
+// ローカル用: アップロードされたファイルをメモリに保持 (key -> ファイル)
+const uploads: Record<string, { data: Buffer; contentType: string }> = {}
 
 const store: Record<string, Reservation> = {}
 let nextId = 1
@@ -137,18 +142,54 @@ const server = http.createServer((req, res) => {
     return json(res, 200, Object.values(equipmentStore))
   }
 
+  // POST /equipment/upload-url (本番では S3 署名付きURL。ローカルは自サーバーの /uploads/:key)
+  if (req.method === 'POST' && url.pathname === '/equipment/upload-url') {
+    const key = `equipment/${randomUUID()}`
+    return json(res, 200, { uploadUrl: `http://localhost:${PORT}/uploads/${key}`, key })
+  }
+
+  // PUT /uploads/:key
+  const uploadMatch = url.pathname.match(/^\/uploads\/(equipment\/[\w-]+)$/)
+  if (req.method === 'PUT' && uploadMatch) {
+    const chunks: Buffer[] = []
+    req.on('data', chunk => chunks.push(chunk))
+    req.on('end', () => {
+      uploads[uploadMatch[1]] = {
+        data: Buffer.concat(chunks),
+        contentType: req.headers['content-type'] ?? 'application/octet-stream',
+      }
+      json(res, 200, {})
+    })
+    return
+  }
+
+  // GET /equipment/:id/attachment
+  const attachmentMatch = url.pathname.match(/^\/equipment\/([^/]+)\/attachment$/)
+  if (req.method === 'GET' && attachmentMatch) {
+    const attachment = equipmentStore[attachmentMatch[1]]?.attachment
+    const file = attachment && uploads[attachment.key]
+    if (!attachment || !file) return json(res, 404, { error: 'Not found' })
+    res.writeHead(200, {
+      'Content-Type': file.contentType,
+      'Content-Disposition': `inline; filename*=UTF-8''${encodeURIComponent(attachment.name)}`,
+      'Access-Control-Allow-Origin': '*',
+    })
+    res.end(file.data)
+    return
+  }
+
   // POST /equipment
   if (req.method === 'POST' && url.pathname === '/equipment') {
     let body = ''
     req.on('data', chunk => { body += chunk })
     req.on('end', () => {
       try {
-        const { name, category, quantity, location, status, notes = '' } = JSON.parse(body)
+        const { name, category, quantity, location, status, notes = '', attachment } = JSON.parse(body)
         if (!name || !category || !location || !status || typeof quantity !== 'number') {
           return json(res, 400, { error: 'name, category, quantity, location, status required' })
         }
         const id = String(nextEquipmentId++)
-        const item: EquipmentItem = { id, name, category, quantity, location, status, notes }
+        const item: EquipmentItem = { id, name, category, quantity, location, status, notes, attachment }
         equipmentStore[id] = item
         json(res, 201, item)
       } catch {
@@ -168,11 +209,11 @@ const server = http.createServer((req, res) => {
     req.on('data', chunk => { body += chunk })
     req.on('end', () => {
       try {
-        const { name, category, quantity, location, status, notes = '' } = JSON.parse(body)
+        const { name, category, quantity, location, status, notes = '', attachment } = JSON.parse(body)
         if (!name || !category || !location || !status || typeof quantity !== 'number') {
           return json(res, 400, { error: 'name, category, quantity, location, status required' })
         }
-        equipmentStore[id] = { id, name, category, quantity, location, status, notes }
+        equipmentStore[id] = { id, name, category, quantity, location, status, notes, attachment }
         json(res, 200, equipmentStore[id])
       } catch {
         json(res, 400, { error: 'Invalid body' })
@@ -205,4 +246,6 @@ server.listen(PORT, () => {
   console.log('  POST   /equipment')
   console.log('  PUT    /equipment/:id')
   console.log('  DELETE /equipment/:id')
+  console.log('  POST   /equipment/upload-url')
+  console.log('  GET    /equipment/:id/attachment')
 })

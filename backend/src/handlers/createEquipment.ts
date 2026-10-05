@@ -16,6 +16,7 @@ const CORS_HEADERS = {
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   let name: string, category: string, quantity: number, location: string, status: string, notes: string
+  let attachment: { key: string; name: string } | undefined
   try {
     const body = JSON.parse(event.body ?? '{}')
     name = String(body.name ?? '').trim()
@@ -24,6 +25,12 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     location = String(body.location ?? '').trim()
     status = String(body.status ?? '')
     notes = String(body.notes ?? '').trim()
+    if (body.attachment) {
+      const key = String(body.attachment.key ?? '')
+      const fileName = String(body.attachment.name ?? '').trim()
+      if (!key.startsWith('equipment/') || !fileName) throw new Error()
+      attachment = { key, name: fileName }
+    }
     if (!name || !Number.isFinite(quantity) || quantity < 0 || !VALID_STATUSES.includes(status)) throw new Error()
   } catch {
     return {
@@ -37,13 +44,13 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     const id = randomUUID()
     await client.send(new PutCommand({
       TableName: TABLE,
-      Item: { id, name, category, quantity, location, status, notes },
+      Item: { id, name, category, quantity, location, status, notes, ...(attachment && { attachment }) },
     }))
 
     return {
       statusCode: 201,
       headers: CORS_HEADERS,
-      body: JSON.stringify({ id, name, category, quantity, location, status, notes }),
+      body: JSON.stringify({ id, name, category, quantity, location, status, notes, attachment }),
     }
   } catch (err) {
     console.error(err)

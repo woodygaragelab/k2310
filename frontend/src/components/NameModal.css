@@ -287,3 +287,35 @@
   justify-content: center;
   line-height: 1;
 }
+
+.attachment-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.attachment-link {
+  flex: 1 1 100%;
+  font-size: 0.9rem;
+  word-break: break-all;
+}
+
+.attachment-btn {
+  padding: 6px 12px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.attachment-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.attachment-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+}
