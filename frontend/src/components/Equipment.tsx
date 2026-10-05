@@ -4,6 +4,11 @@ import { EquipmentModal } from './EquipmentModal'
 import type { EquipmentItem } from '../types'
 import './Equipment.css'
 
+function truncate(text: string, max: number) {
+  const chars = Array.from(text)
+  return chars.length > max ? chars.slice(0, max).join('') + '...' : text
+}
+
 export function Equipment() {
   const { items, loading, error, addEquipment, editEquipment, removeEquipment } = useEquipment()
   const [modalState, setModalState] = useState<{ open: boolean; item?: EquipmentItem }>({ open: false })
@@ -44,7 +49,7 @@ export function Equipment() {
             <tr key={item.id} onClick={() => setModalState({ open: true, item })} className="equipment-row">
               <td className="equipment-name">{item.name}</td>
               <td>{item.location}</td>
-              <td className="equipment-notes">{item.notes}</td>
+              <td className="equipment-notes">{truncate(item.notes ?? '', 15)}</td>
             </tr>
           ))}
         </tbody>
