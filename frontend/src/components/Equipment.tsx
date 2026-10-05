@@ -14,9 +14,10 @@ export function Equipment() {
   if (error) return <div className="equipment-wrapper"><p className="equipment-error">{error}</p></div>
 
   const q = query.trim().toLowerCase()
-  const filtered = q
+  const filtered = (q
     ? items.filter(item => item.name.toLowerCase().includes(q) || (item.notes ?? '').toLowerCase().includes(q))
-    : items
+    : [...items]
+  ).sort((a, b) => a.name.localeCompare(b.name, 'ja'))
 
   return (
     <div className="equipment-wrapper">
