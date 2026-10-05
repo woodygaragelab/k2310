@@ -32,6 +32,16 @@
   background: #4338ca;
 }
 
+.equipment-search {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 12px;
+  margin: 0 0 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
 .equipment-row {
   cursor: pointer;
 }

@@ -8,8 +8,15 @@ export function Equipment() {
   const { items, loading, error, addEquipment, editEquipment, removeEquipment } = useEquipment()
   const [modalState, setModalState] = useState<{ open: boolean; item?: EquipmentItem }>({ open: false })
 
+  const [query, setQuery] = useState('')
+
   if (loading) return <div className="equipment-wrapper"><p className="equipment-placeholder">読み込み中...</p></div>
   if (error) return <div className="equipment-wrapper"><p className="equipment-error">{error}</p></div>
+
+  const q = query.trim().toLowerCase()
+  const filtered = q
+    ? items.filter(item => item.name.toLowerCase().includes(q) || (item.notes ?? '').toLowerCase().includes(q))
+    : items
 
   return (
     <div className="equipment-wrapper">
@@ -17,6 +24,13 @@ export function Equipment() {
         <h2 className="equipment-title">備品一覧</h2>
         <button className="equipment-add-btn" onClick={() => setModalState({ open: true })}>+ 備品を追加</button>
       </div>
+      <input
+        className="equipment-search"
+        type="search"
+        placeholder="備品名・備考で検索"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+      />
       <table className="equipment-table">
         <thead>
           <tr>
@@ -26,7 +40,7 @@ export function Equipment() {
           </tr>
         </thead>
         <tbody>
-          {items.map(item => (
+          {filtered.map(item => (
             <tr key={item.id} onClick={() => setModalState({ open: true, item })} className="equipment-row">
               <td className="equipment-name">{item.name}</td>
               <td>{item.location}</td>
