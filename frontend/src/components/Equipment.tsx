@@ -9,7 +9,7 @@ function truncate(text: string, max: number) {
   return chars.length > max ? chars.slice(0, max).join('') + '...' : text
 }
 
-export function Equipment() {
+export function Equipment({ category }: { category?: string }) {
   const { items, loading, error, addEquipment, editEquipment, removeEquipment } = useEquipment()
   const [modalState, setModalState] = useState<{ open: boolean; item?: EquipmentItem }>({ open: false })
 
@@ -19,10 +19,9 @@ export function Equipment() {
   if (error) return <div className="equipment-wrapper"><p className="equipment-error">{error}</p></div>
 
   const q = query.trim().toLowerCase()
-  const filtered = (q
-    ? items.filter(item => item.name.toLowerCase().includes(q) || (item.notes ?? '').toLowerCase().includes(q))
-    : [...items]
-  ).sort((a, b) => a.name.localeCompare(b.name, 'ja'))
+  const filtered = items
+    .filter(item => !category || item.category === category)
+    .filter(item => !q || item.name.toLowerCase().includes(q) || (item.notes ?? '').toLowerCase().includes(q)).sort((a, b) => a.name.localeCompare(b.name, 'ja'))
 
   return (
     <div className="equipment-wrapper">
@@ -57,6 +56,7 @@ export function Equipment() {
       {modalState.open && (
         <EquipmentModal
           item={modalState.item}
+          defaultCategory={category}
           onSave={data => modalState.item ? editEquipment(modalState.item.id, data) : addEquipment(data)}
           onDelete={modalState.item ? () => removeEquipment(modalState.item!.id) : undefined}
           onClose={() => setModalState({ open: false })}

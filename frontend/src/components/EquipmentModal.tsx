@@ -6,14 +6,15 @@ const STATUS_OPTIONS: EquipmentItem['status'][] = ['使用可能', '貸出中', 
 
 interface Props {
   item?: EquipmentItem
+  defaultCategory?: string
   onSave: (item: Omit<EquipmentItem, 'id'>) => void
   onDelete?: () => void
   onClose: () => void
 }
 
-export function EquipmentModal({ item, onSave, onDelete, onClose }: Props) {
+export function EquipmentModal({ item, defaultCategory, onSave, onDelete, onClose }: Props) {
   const [name, setName] = useState(item?.name ?? '')
-  const [category, setCategory] = useState(item?.category ?? '')
+  const [category, setCategory] = useState(item?.category ?? defaultCategory ?? '')
   const [quantity, setQuantity] = useState(item?.quantity ?? 1)
   const [location, setLocation] = useState(item?.location ?? '')
   const [status, setStatus] = useState<EquipmentItem['status']>(item?.status ?? '使用可能')

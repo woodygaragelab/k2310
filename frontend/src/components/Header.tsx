@@ -1,6 +1,6 @@
 import './Header.css'
 
-export type View = 'calendar' | 'equipment'
+export type View = 'calendar' | 'equipment' | 'food' | 'guide'
 
 interface HeaderProps {
   current: View
@@ -10,6 +10,8 @@ interface HeaderProps {
 const MENU_ITEMS: { key: View; label: string }[] = [
   { key: 'calendar', label: 'カレンダー' },
   { key: 'equipment', label: '備品' },
+  { key: 'food', label: '食材' },
+  { key: 'guide', label: 'ガイド' },
 ]
 
 export function Header({ current, onChange }: HeaderProps) {

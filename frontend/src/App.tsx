@@ -11,7 +11,10 @@ function App() {
   return (
     <div className="app">
       <Header current={view} onChange={setView} />
-      {view === 'calendar' ? <Calendar /> : <Equipment />}
+      {view === 'calendar' && <Calendar />}
+      {view === 'equipment' && <Equipment key="equipment" category="備品" />}
+      {view === 'food' && <Equipment key="food" category="食材" />}
+      {view === 'guide' && <Equipment key="guide" category="ガイド" />}
     </div>
   )
 }
