@@ -20,6 +20,9 @@
   width: 100%;
   max-width: 420px;
   margin: 16px;
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: slideUp 0.2s ease;
 }
@@ -34,6 +37,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 24px 0;
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -57,6 +61,10 @@
 
 .modal-body {
   padding: 16px 24px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-label {
@@ -140,6 +148,7 @@
   display: flex;
   gap: 10px;
   padding: 0 24px 20px;
+  flex-shrink: 0;
   justify-content: flex-end;
   align-items: center;
 }
